@@ -33,10 +33,14 @@ if (config.has('ssl_cert_file') && config.has('ssl_key_file')) {
 var proxy = httpProxy.createProxyServer(options);
 
 var sendError = function(res, err) {
-    return res.status(500).send({
+    /*return res.status(500).send({
          error: err,
          message: "An error occured in the GeoJSON proxy"
-    });
+    });*/
+    res.writeHead(500, {
+    'Content-Type': 'text/plain'
+  });
+  res.end('An error occured in the GeoJSON proxy');
 };
 
 // error handling
@@ -48,7 +52,9 @@ proxy.on("error", function (err, req, res) {
 //
 proxy.on("proxyRes", function(proxyRes, req, res) {
     lib.enableCors(req, res);
-    modifyResponse(res, proxyRes, lib.jsonToGeoJSON(body));
+    modifyResponse(res, proxyRes, function (body) {
+	    lib.jsonToGeoJSON(body);
+       });
 });
 
 // Start proxying
