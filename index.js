@@ -68,13 +68,7 @@ var server = http.createServer(function (req, res) {
         return;
     }
 
-    proxy.web(req, res, {
-        target: options.target,
-        //secure: true,
-        changeOrigin: true
-    }, function(err) {
-        sendError(res, err);
-    });
+    proxy.web(req, res);
 
 }).listen(config.port);
 
