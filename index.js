@@ -1,3 +1,14 @@
+/**
+ * This will create a GEOJSON proxy which deals with CORS issues.
+ * It accepts the following command line parameters:
+ * - config path to the configuration file
+ */
+ // Define the command line options
+const optionDefinitions = [
+    { name: "config", alias: "c", type: String, defaultValue: "./config/default.json" }
+];
+commandLineArgs = require("command-line-args");
+
 // parse command line options
 const options = commandLineArgs(optionDefinitions);
 
