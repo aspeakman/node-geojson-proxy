@@ -45,6 +45,7 @@ function _extractRowGeometry (row, geoFields) {
 function jsonToGeoJSON (body) {
     if (!body || !config.has('geoFields')) return body;
     const geoFields = config.get('geoFields');
+    if (config.has('debug')) console.log(geoFields);
     if (Array.isArray(body)) { // rows of data - translated either to a FeatureCollection (default) or a GeometryCollection
         var count = 0;
         var newbody = { type: "FeatureCollection", features: [] };
