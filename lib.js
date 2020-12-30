@@ -26,32 +26,37 @@ function enableCors (req, res) {
 };
 
 function jsonToGeoJSON (body) {
-    if (body && Array.isArray(body)) {
-       var count = 0;
-       var newbody = { type: "FeatureCollection", features: [] };
-       for (var row of body) {
-           var feature = { type: "Feature" };
-           for (const gf of geo_fields) {
-               if (row[gf.name] != null && gf.types.indexOf(row[gf.name].type) > -1) {
-                   feature.geometry = row[gf.name];
-                   delete row[gf.name]; // redundant in properties
-                   break;
+    if (!body || !config.has('geoConfig')) return body;
+    const geoConfig = config.get('geoConfig');
+    if (Array.isArray(body)) { // rows of data - translated either to a FeatureCollection (default) or a GeometryCollection
+        if (geoConfig.collection == 'Geometry') {
+            var newbody = { type: "GeometryCollection", geometries: [] };
+        } else {
+            var newbody = { type: "FeatureCollection", features: [] };
+        }
+        for (var row of body) {
+               var feature = { type: "Feature" };
+               for (const gf of geo_fields) {
+                   if (row[gf.name] != null && gf.types.indexOf(row[gf.name].type) > -1) {
+                       feature.geometry = row[gf.name];
+                       delete row[gf.name]; // redundant in properties
+                       break;
+                   }
                }
-           }
-           if (feature.geometry == null) {
-              for (const lf of lnglat_fields) {
-                 if (row[lf[0]] != null && row[lf[1]] != null) {
-                   feature.geometry = { type: 'Point', coordinates:
-                           [ row[lf[0]], row[lf[1]] ] }; // new GeoJson entry
-                   break;
-                 }
-              }
-           }
-           if (feature.geometry != null) {
-               feature.properties = row;
-               newbody.features.push(feature);
-               count += 1;
-           }
+               if (feature.geometry == null) {
+                  for (const lf of lnglat_fields) {
+                     if (row[lf[0]] != null && row[lf[1]] != null) {
+                       feature.geometry = { type: 'Point', coordinates:
+                               [ row[lf[0]], row[lf[1]] ] }; // new GeoJson entry
+                       break;
+                     }
+                  }
+               }
+               if (feature.geometry != null) {
+                   feature.properties = row;
+                   newbody.features.push(feature);
+                   count += 1;
+               }
        }
        if (count > 0) body = newbody;
     }
