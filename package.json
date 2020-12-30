@@ -8,5 +8,14 @@
   },
   "keywords": ['node', 'postgrest', postgresql', 'proxy', 'geojson'],
   "author": "Andrew Speakman",
-  "license": "GPL"
+  "license": "MIT",
+  "dependencies": {
+    "eventemitter3": "^4.0.0",
+    "requires-port": "^1.0.0",
+    "follow-redirects": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aspeakman/node-geojson-proxy.git"
+  },
 }
