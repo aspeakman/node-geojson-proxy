@@ -29,6 +29,8 @@ if (config.has('ssl_cert_file') && config.has('ssl_key_file')) {
     }
 }
 
+if (config.has('debug')) console.log (options);
+
 // Create a proxy server using the options
 var proxy = httpProxy.createProxyServer(options);
 
