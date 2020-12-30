@@ -10,17 +10,17 @@
     "ssl_cert_file": "/etc/ssl/certs/ssl-cert-snakeoil.pem",
     "ssl_key_file": "/etc/ssl/private/ssl-cert-snakeoil.key",
     
-    "geoFields": [ // JSON fields that can be mapped to GeoJSON in order of priority. Keys are as follow:
+    "geoFields": [ // List of JSON fields that can be mapped to GeoJSON in order of priority. Critical keys are as follow:
                    // "geojson" for a native geojson field eg a PostGIS geometry and the acceptable GeoJSON "types" it can contain
                    // "point_pair" for two long/lat fields which will make a GeoJSON Point
                    // "coordinates" which will be used as the coordinates list of the single GeoJSON "type" supplied
-        { "geojson": "location", types: [ "Point" ] },
-        { "geojson": "borders", types: [ "Polygon", "MultiPolygon" ] }
+        { "geojson": "location", "types": [ "Point" ] },
+        { "geojson": "borders", "types": [ "Polygon", "MultiPolygon" ] }
         { "point_pair": [ "lng", "lat" ] }, 
         { "point_pair": [ "longitude", "latitude" ] },
-        { "coordinates": "point": "type": "Point" },
-        { "coordinates": "polygon": "type": "Polygon" },
-        { "coordinates": "multipolygon": "type": "MultiPolygon" }
+        { "coordinates": "point", "type": "Point" },
+        { "coordinates": "polygon", "type": "Polygon" },
+        { "coordinates": "multipolygon", "type": "MultiPolygon" }
     ]
 
 }
