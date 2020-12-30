@@ -6,10 +6,10 @@ function enableCors (req, res) {
     if (!config.has('corsAllow')) return;
     const corsAllow = config.get('corsAllow');
     if (req.headers['access-control-request-method']) {
-            res.setHeader('access-control-allow-methods', 'POST, GET, OPTIONS'); // allow read only access
+        res.setHeader('access-control-allow-methods', 'POST, GET, OPTIONS'); // allow read only access
     }
     if (req.headers['access-control-request-headers']) {
-            res.setHeader('access-control-allow-headers', req.headers['access-control-request-headers']); // agree to any request header
+        res.setHeader('access-control-allow-headers', req.headers['access-control-request-headers']); // agree to any request header
     }
     res.setHeader('access-control-allow-credentials', 'false');
     if (req.headers.origin && Array.isArray(corsAllow))  {
@@ -46,6 +46,7 @@ function jsonToGeoJSON (body) {
     if (!body || !config.has('geoFields')) return body;
     const geoFields = config.get('geoFields');
     if (Array.isArray(body)) { // rows of data - translated either to a FeatureCollection (default) or a GeometryCollection
+        var count = 0;
         var newbody = { type: "FeatureCollection", features: [] };
         for (var row of body) {
             var feature = { type: "Feature", geometry: _extractRowGeometry(row, geoFields) };
