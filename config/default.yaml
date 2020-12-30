@@ -1,16 +1,11 @@
 
-    # the port the proxy server will expose
-    "port": 9001 
+    "port": 9001 # the port the proxy server will expose
     
-    # the local target for JSON data that the proxy server will interface to 
-    "target": "http://localhost:9000" 
-    # paths to SSL certificates on the local server
-    "ssl_cert_file": "/etc/ssl/certs/ssl-cert-snakeoil.pem"
-    "ssl_key_file": "/etc/ssl/private/ssl-cert-snakeoil.key"
-    # true/false, if you want to verify the SSL Certs
-    "ssl_secure": false
-    # true/false, changes the origin of the host header to the target URL
-    "changeOrigin": false
+    "target": "http://localhost:9000" # the local target for JSON data that the proxy server will interface to 
+    "ssl_cert_file": "/etc/ssl/certs/ssl-cert-snakeoil.pem" # paths to SSL certificates on the local server
+    "ssl_key_file": "/etc/ssl/private/ssl-cert-snakeoil.key" # paths to SSL certificates on the local server
+    "ssl_secure": false # true/false, if you want to verify the SSL Certs
+    "changeOrigin": false # true/false, changes the origin of the host header to the target URL
     
     # asterisk to allow unretricted access OR a list of regular expressions matching allowed origins
     # example of a list [ /^https?:\/\/geojson\.io/, /https?:\/\/example\.com/ ]
