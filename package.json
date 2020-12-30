@@ -1,7 +1,7 @@
 {
   "name": "geojson_proxy",
   "version": "1.0.0",
-  "description": "",
+  "description": "A proxy to provide GeoJSON output from a PostgREST target",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
