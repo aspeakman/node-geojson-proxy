@@ -45,14 +45,11 @@ function _extractRowGeometry (row, geoFields) {
 function jsonToGeoJSON (body) {
     if (!body || !config.has('geoFields')) return body;
     const geoFields = config.get('geoFields');
-    if (config.has('debug')) console.log(geoFields);
     if (Array.isArray(body)) { // rows of data - translated either to a FeatureCollection (default) or a GeometryCollection
         var count = 0;
         var newbody = { type: "FeatureCollection", features: [] };
         for (var row of body) {
-            if (config.has('debug')) console.log(row);
             var feature = { type: "Feature", geometry: _extractRowGeometry(row, geoFields) };
-            if (config.has('debug')) console.log(feature);
             if (feature.geometry != null) {
                 feature.properties = row;
                 newbody.features.push(feature);
