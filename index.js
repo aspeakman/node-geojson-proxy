@@ -25,7 +25,7 @@ if (config.has('ssl_cert_file') && config.has('ssl_key_file')) {
         };
         if (config.has('ssl_secure')) options.secure = config.get('ssl_secure');
     } catch (err) {
-        // do nothing
+        options.ssl = null;
     }
 }
 
@@ -37,10 +37,8 @@ var sendError = function(res, err) {
          error: err,
          message: "An error occured in the GeoJSON proxy"
     });*/
-    res.writeHead(500, {
-    'Content-Type': 'text/plain'
-  });
-  res.end('An error occured in the GeoJSON proxy');
+    res.writeHead(500, { 'Content-Type': 'text/plain' } );
+    res.end('An error occured in the GeoJSON proxy');
 };
 
 // error handling
@@ -59,9 +57,9 @@ proxy.on("proxyRes", function(proxyRes, req, res) {
 
 // Start proxying
 if (options.ssl != null) {
-    console.log("Starting GeoJSON proxy on port", config.port, "for", config.target);
-} else {
     console.log("Starting secure GeoJSON proxy on port", config.port, "for", config.target);
+} else {
+    console.log("Starting GeoJSON proxy on port", config.port, "for", config.target);
 }
 
 // Create your server and then proxies the request
