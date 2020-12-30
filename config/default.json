@@ -4,7 +4,7 @@
     "port": 9001, 
     
     // the local target for JSON data that the proxy server will interface to 
-    "target": "http://localhost:9000", // the local target for JSON data that the proxy server will interface to 
+    "target": "http://localhost:9000", 
     
     // asterisk to allow unretricted access OR a list of regular expressions matching allowed origins
     // example [ /^https?:\/\/geojson\.io/ ]
