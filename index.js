@@ -23,7 +23,7 @@ if (config.has('ssl_cert_file') && config.has('ssl_key_file')) {
             key: fs.readFileSync(config.get('ssl_key_file'), 'utf8'),
             cert: fs.readFileSync(config.get('ssl_cert_file'), 'utf8')
         };
-        options.secure = config.ssl_secure;
+        if (config.has('ssl_secure')) options.secure = config.get('ssl_secure');
     } catch (err) {
         // do nothing
     }
