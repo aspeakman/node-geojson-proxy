@@ -14,16 +14,16 @@ const config = require('config');
 // get proxy options from config
 var options = {
     target: config.target,
-    secure: config.ssl-secure, 
     changeOrigin: config.changeOrigin
 }
-if (config.has('ssl-cert') && config.has('ssl-key')) {
+if (config.has('ssl_cert_file') && config.has('ssl_key_file')) {
     const fs = require("fs")
     try {
         options.ssl = {
-            key: fs.readFileSync(config.get('ssl-key'), 'utf8'),
-            cert: fs.readFileSync(config.get('ssl-cert'), 'utf8')
-        }
+            key: fs.readFileSync(config.get('ssl_key_file'), 'utf8'),
+            cert: fs.readFileSync(config.get('ssl_cert_file'), 'utf8')
+        };
+        options.secure = config.ssl_secure;
     } catch (err) {
         // do nothing
     }
