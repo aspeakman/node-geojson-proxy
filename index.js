@@ -1,16 +1,12 @@
 /**
  * This will create a GEOJSON proxy which deals with CORS issues.
- * It accepts the following command line parameters:
- * - config path to the configuration file
+ * Settings are on the config directory by default
  */
- // Define the command line options
-const optionDefinitions = [
-    { name: "config", alias: "c", type: String, defaultValue: "./config/default.json" }
-];
-commandLineArgs = require("command-line-args");
 
-// parse command line options
-const options = commandLineArgs(optionDefinitions);
+var http = require("http")
+var httpProxy = require("http-proxy");
+var modifyResponse = require('node-http-proxy-json');
+const config = require('config');
 
 // Define the fields that will be scanned for specific types of GeoJSON entities
 const geo_fields = [
@@ -28,10 +24,7 @@ const cors_allowed = [
 ]
 
 // Start the proxy
-console.log("Starting proxy on port", options.port, "for", options.target);
-var http = require("http"), httpProxy = require("http-proxy");
-
-var modifyResponse = require('node-http-proxy-json');
+console.log("Starting proxy on port", config.port, "for", config.target);
 
 // Create a proxy server with custom application logic
 const fs = require('fs');
@@ -125,7 +118,7 @@ var server = http.createServer(function (req, res) {
         sendError(res, err);
     });
 
-}).listen(options.port);
+}).listen(config.port);
 
 
 
