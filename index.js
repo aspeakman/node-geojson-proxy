@@ -12,21 +12,21 @@ process.env.NODE_ENV = "local_default"; // use local settings as default
 const config = require('config');
 
 // get proxy options from config
+var options = {
+    target: config.target,
+    secure: config.ssl-secure, 
+    changeOrigin: config.changeOrigin
+}
 if (config.has('ssl-cert') && config.has('ssl-key')) {
     const fs = require("fs")
     try {
-        const ssl = {
+        options.ssl = {
             key: fs.readFileSync(config.get('ssl-key'), 'utf8'),
             cert: fs.readFileSync(config.get('ssl-cert'), 'utf8')
         }
     } catch (err) {
-        const ssl = null;
+        // do nothing
     }
-const options = {
-    target: config.target,
-    secure: config.ssl-secure, 
-    changeOrigin: config.changeOrigin.
-    ssl: ssl
 }
 
 // Create a proxy server using the options
@@ -52,7 +52,11 @@ proxy.on("proxyRes", function(proxyRes, req, res) {
 });
 
 // Start proxying
-console.log("Starting GeoJSON proxy on port", config.port, "for", config.target);
+if (options.ssl != null) {
+    console.log("Starting GeoJSON proxy on port", config.port, "for", config.target);
+} else {
+    console.log("Starting secure GeoJSON proxy on port", config.port, "for", config.target);
+}
 
 // Create your server and then proxies the request
 var server = http.createServer(function (req, res) {
