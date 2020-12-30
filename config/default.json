@@ -5,13 +5,17 @@
     
     // the local target for JSON data that the proxy server will interface to 
     "target": "http://localhost:9000", 
-    
-    // asterisk to allow unretricted access OR a list of regular expressions matching allowed origins
-    // example [ /^https?:\/\/geojson\.io/ ]
-    "corsAllow": "*", 
-    
+    // paths to SSL certificates on the local server
     "ssl_cert_file": "/etc/ssl/certs/ssl-cert-snakeoil.pem",
     "ssl_key_file": "/etc/ssl/private/ssl-cert-snakeoil.key",
+    // true/false, if you want to verify the SSL Certs
+    "ssl_secure": false,
+    // true/false, changes the origin of the host header to the target URL
+    "changeOrigin": false,
+    
+    // asterisk to allow unretricted access OR a list of regular expressions matching allowed origins
+    // example of a list [ /^https?:\/\/geojson\.io/, /https?:\/\/example\.com/ ]
+    "corsAllow": "*", 
     
     // List of JSON fields that can be mapped to GeoJSON in order of priority. The search stops when a matching field is found
     // Critical keys are as follow:
