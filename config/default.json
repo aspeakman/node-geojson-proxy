@@ -1,19 +1,24 @@
 {
 
-    "port": 9001, // the port the proxy server will expose
+    // the port the proxy server will expose
+    "port": 9001, 
     
+    // the local target for JSON data that the proxy server will interface to 
     "target": "http://localhost:9000", // the local target for JSON data that the proxy server will interface to 
     
-    "corsAllow": "*", // asterisk to allow unretricted access OR a list of regular expressions matching allowed origins
-                      // example [ /^https?:\/\/geojson\.io/ ]
+    // asterisk to allow unretricted access OR a list of regular expressions matching allowed origins
+    // example [ /^https?:\/\/geojson\.io/ ]
+    "corsAllow": "*", 
     
     "ssl_cert_file": "/etc/ssl/certs/ssl-cert-snakeoil.pem",
     "ssl_key_file": "/etc/ssl/private/ssl-cert-snakeoil.key",
     
-    "geoFields": [ // List of JSON fields that can be mapped to GeoJSON in order of priority. Critical keys are as follow:
-                   // "geojson" for a native geojson field eg a PostGIS geometry and the acceptable GeoJSON "types" it can contain
-                   // "point_pair" for two long/lat fields which will make a GeoJSON Point
-                   // "coordinates" which will be used as the coordinates list of the single GeoJSON "type" supplied
+    // List of JSON fields that can be mapped to GeoJSON in order of priority. The search stops when a matching field is found
+    // Critical keys are as follow:
+    // "geojson" for a native geojson field eg a PostGIS geometry and the acceptable GeoJSON "types" it can contain
+    // "point_pair" for two long/lat fields which will make a GeoJSON Point
+    // "coordinates" which are array fields with the coordinates of the single GeoJSON "type" supplied
+    "geoFields": [ 
         { "geojson": "location", "types": [ "Point" ] },
         { "geojson": "borders", "types": [ "Polygon", "MultiPolygon" ] }
         { "point_pair": [ "lng", "lat" ] }, 
