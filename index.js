@@ -53,7 +53,7 @@ proxy.on("error", function (err, req, res) {
 proxy.on("proxyRes", function(proxyRes, req, res) {
     lib.enableCors(req, res);
     modifyResponse(res, proxyRes, function (body) {
-	    lib.jsonToGeoJSON(body);
+	    return lib.jsonToGeoJSON(body);
        });
 });
 
