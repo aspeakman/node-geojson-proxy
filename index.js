@@ -32,7 +32,8 @@ if (config.has('ssl_cert_file') && config.has('ssl_key_file')) {
 if (config.has('debug')) console.log (options);
 
 // Create a proxy server using the options
-var proxy = httpProxy.createProxyServer(options);
+//var proxy = httpProxy.createProxyServer(options);
+var proxy = httpProxy.createProxyServer({});
 
 var sendError = function(res, err) {
     /*return res.status(500).send({
@@ -74,7 +75,11 @@ var server = http.createServer(function (req, res) {
         return;
     }
 
-    proxy.web(req, res);
+    //proxy.web(req, res);
+    proxy.web(req, res, options, function(err) {
+        sendError(res, err);
+    });
+
 
 }).listen(config.port);
 
