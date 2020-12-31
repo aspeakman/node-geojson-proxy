@@ -16,7 +16,7 @@ var options = {
     target: config.target,
     changeOrigin: config.changeOrigin
 }
-if (config.has('ssl_cert_file') && config.has('ssl_key_file')) {
+/*if (config.has('ssl_cert_file') && config.has('ssl_key_file')) {
     const fs = require("fs")
     try {
         options.ssl = {
@@ -27,13 +27,12 @@ if (config.has('ssl_cert_file') && config.has('ssl_key_file')) {
     } catch (err) {
         options.ssl = null;
     }
-}
+}*/
 
 if (config.has('debug')) console.log (options);
 
 // Create a proxy server using the options
-//var proxy = httpProxy.createProxyServer(options);
-var proxy = httpProxy.createProxyServer({});
+var proxy = httpProxy.createProxyServer(options);
 
 var sendError = function(res, err) {
     /*return res.status(500).send({
@@ -59,11 +58,12 @@ proxy.on("proxyRes", function(proxyRes, req, res) {
 });
 
 // Start proxying
-if (options.ssl != null) {
+/*if (options.ssl != null) {
     console.log("Starting secure GeoJSON proxy on port", config.port, "for", config.target);
 } else {
     console.log("Starting GeoJSON proxy on port", config.port, "for", config.target);
-}
+}*/
+console.log("Starting GeoJSON proxy on port", config.port, "for", config.target);
 
 // Create your server and then proxies the request
 var server = http.createServer(function (req, res) {
@@ -75,10 +75,10 @@ var server = http.createServer(function (req, res) {
         return;
     }
 
-    //proxy.web(req, res);
-    proxy.web(req, res, options, function(err) {
+    proxy.web(req, res);
+    /*proxy.web(req, res, options, function(err) {
         sendError(res, err);
-    });
+    });*/
 
 
 }).listen(config.port);
