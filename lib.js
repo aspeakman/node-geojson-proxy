@@ -29,7 +29,7 @@ function _extractRowGeometry (row, geoFields) {
     for (const gf of geoFields) {
         if (gf.geojson != null && gf.types != null && row[gf.geojson] != null && gf.types.indexOf(row[gf.geojson].type) > -1) {
             var geometry = row[gf.geojson];
-            delete row[gf.geojson]; // redundant in properties
+            delete row[gf.geojson]; // redundant, so removed from properties
             return geometry;
         } else if (gf.point_pair != null && row[gf.point_pair[0]] != null && row[gf.point_pair[1]] != null) {
             return { type: 'Point', coordinates:
