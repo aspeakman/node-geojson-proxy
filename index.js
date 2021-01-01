@@ -35,7 +35,7 @@ proxy.on("error", function (err, req, res) {
 proxy.on("proxyRes", function(proxyRes, req, res) {
     lib.enableCors(req, res);
     modifyResponse(res, proxyRes, function (body) {
-	var ct_header = res.headers['content-type'];
+	var ct_header = proxyRes.headers['content-type'];
         if (ct_header == null || ct_header.indexOf('application/json') == 0) {
 	    return lib.jsonToGeoJSON(body); // massage the reponse only if it is proper JSON
         } else { 
