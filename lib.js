@@ -1,12 +1,12 @@
 // Function library
-process.env.NODE_ENV = "local_default"; // use local settings as default
+process.env.NODE_ENV = "local_default"; // uses the settings in "local_default" to override "default"
 const config = require('config');
 
 function enableCors (req, res) {
-    if (!config.has('corsAllow')) return;
+    if (!config.has('corsAllow')) return; // no CORS processing
     const corsAllow = config.get('corsAllow');
     if (req.headers['access-control-request-method']) {
-        res.setHeader('access-control-allow-methods', 'POST, GET, OPTIONS'); // allow read only access
+        res.setHeader('access-control-allow-methods', 'POST, GET, OPTIONS'); // only allow read access
     }
     if (req.headers['access-control-request-headers']) {
         res.setHeader('access-control-allow-headers', req.headers['access-control-request-headers']); // agree to any request header
@@ -43,28 +43,24 @@ function _extractRowGeometry (row, geoFields) {
 }
 
 function jsonToGeoJSON (body) {
-    if (!body || !config.has('geoFields')) return body;
+    var newbody = { type: "FeatureCollection", features: [] }; // always returns a collection
+    if (!body || !config.has('geoFields')) return newbody; // empty collection if there are no geo related results
     const geoFields = config.get('geoFields');
-    if (Array.isArray(body)) { // rows of data - translated either to a FeatureCollection (default) or a GeometryCollection
-        var count = 0;
-        var newbody = { type: "FeatureCollection", features: [] };
+    var feature;
+    if (Array.isArray(body)) { // rows of data
         for (var row of body) {
-            var feature = { type: "Feature", geometry: _extractRowGeometry(row, geoFields) };
-            if (feature.geometry != null) {
-                feature.properties = row;
-                newbody.features.push(feature);
-                count += 1;
-            }
+            feature = { type: "Feature" };
+            feature.geometry = _extractRowGeometry(row, geoFields); // note can alter the row, also result can be null
+            feature.properties = row;
+            newbody.features.push(feature); # always add a feature even if geometry is null = no location
        }
-       if (count > 0) body = newbody;
     } else {
-        var feature = { type: "Feature", geometry: _extractRowGeometry(body, geoFields) };
-        if (feature.geometry != null) {
-            feature.properties = body;
-            body = feature;
-        }
+        feature = { type: "Feature" };
+        feature.geometry = _extractRowGeometry(body, geoFields); // note can alter the body, also result can be null
+        feature.properties = body;
+        newbody.features.push(feature); # always add a feature even if geometry is null = no location
     }
-    return body; // return value can be a promise
+    return newbody; 
 }
 
 // export library functions
