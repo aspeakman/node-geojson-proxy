@@ -1,5 +1,5 @@
 /**
- * This will create a GEOJSON proxy which deals with CORS issues.
+ * This will create a proxy that can massage a target JSON response with location information into GEOJSON format.
  * Settings are in the config directory by default
  */
 
@@ -8,7 +8,7 @@ var httpProxy = require("http-proxy");
 var modifyResponse = require("node-http-proxy-json");
 var lib = require("./lib")
 
-process.env.NODE_ENV = "local_default"; // use local settings as default
+process.env.NODE_ENV = "local_default"; // use local settings to override the built in defaults
 const config = require('config');
 
 // get proxy options from config
@@ -16,29 +16,11 @@ var options = {
     target: config.target,
     changeOrigin: config.changeOrigin
 }
-/*if (config.has('ssl_cert_file') && config.has('ssl_key_file')) {
-    const fs = require("fs")
-    try {
-        options.ssl = {
-            key: fs.readFileSync(config.get('ssl_key_file'), 'utf8'),
-            cert: fs.readFileSync(config.get('ssl_cert_file'), 'utf8')
-        };
-        if (config.has('ssl_secure')) options.secure = config.get('ssl_secure');
-    } catch (err) {
-        options.ssl = null;
-    }
-}*/
-
-if (config.has('debug')) console.log (options);
 
 // Create a proxy server using the options
 var proxy = httpProxy.createProxyServer(options);
 
 var sendError = function(res, err) {
-    /*return res.status(500).send({
-         error: err,
-         message: "An error occured in the GeoJSON proxy"
-    });*/
     res.writeHead(500, { 'Content-Type': 'text/plain' } );
     res.end('An error occured in the GeoJSON proxy');
 };
@@ -57,15 +39,8 @@ proxy.on("proxyRes", function(proxyRes, req, res) {
        });
 });
 
-// Start proxying
-/*if (options.ssl != null) {
-    console.log("Starting secure GeoJSON proxy on port", config.port, "for", config.target);
-} else {
-    console.log("Starting GeoJSON proxy on port", config.port, "for", config.target);
-}*/
-console.log("Starting GeoJSON proxy on port", config.port, "for", config.target);
 
-// Create your server and then proxies the request
+// Create  server and then proxies the request
 var server = http.createServer(function (req, res) {
 
     if (req.method === 'OPTIONS') {
@@ -76,12 +51,12 @@ var server = http.createServer(function (req, res) {
     }
 
     proxy.web(req, res);
-    /*proxy.web(req, res, options, function(err) {
-        sendError(res, err);
-    });*/
 
+});
 
-}).listen(config.port);
+// Start proxying
+console.log("Starting GeoJSON proxy on port", config.port, "for", config.target);
+server.listen(config.port);
 
 
 
