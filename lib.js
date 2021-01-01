@@ -52,13 +52,13 @@ function jsonToGeoJSON (body) {
             feature = { type: "Feature" };
             feature.geometry = _extractRowGeometry(row, geoFields); // note can alter the row, also result can be null
             feature.properties = row;
-            newbody.features.push(feature); # always add a feature even if geometry is null = no location
+            newbody.features.push(feature); // always add a feature even if geometry is null = no location
        }
     } else {
         feature = { type: "Feature" };
         feature.geometry = _extractRowGeometry(body, geoFields); // note can alter the body, also result can be null
         feature.properties = body;
-        newbody.features.push(feature); # always add a feature even if geometry is null = no location
+        newbody.features.push(feature); // always add a feature even if geometry is null = no location
     }
     return newbody; 
 }
