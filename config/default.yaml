@@ -8,10 +8,10 @@
     # example of a list [ /^https?:\/\/geojson\.io/, /https?:\/\/example\.com/ ]
     "corsAllow": "*" 
     
-    # List of JSON fields with location information that will be used to create the GeoJSON Features in order of priority. The search stops when a matching field is found
-    # Expected key and values are as follow:
+    # List of JSON fields with location information that will be used to create the GeoJSON Feature geometry (in order of priority). 
+    # The search stops when a matching field is found. Expected keys and values are as follow:
     # "geojson" name of a field with the contents expected to be native geojson eg a PostGIS geometry (and the acceptable GeoJSON "types" it can contain)
-    # "point_pair" an array of two long/lat field names (in that order) which will be used to make a GeoJSON Point
+    # "point_pair" an array of two long/lat field names (always in that order) which will be used to make a GeoJSON Point
     # "coordinates" name of a field with the contents expected to be an array to be used as the coordinates of the single GeoJSON "type" supplied
     "geoFields":  
         - { "geojson": "location", "types": [ "Point" ] }
