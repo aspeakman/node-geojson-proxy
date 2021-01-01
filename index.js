@@ -33,6 +33,7 @@ proxy.on("error", function (err, req, res) {
 // Listen for the `proxyRes` event on `proxy`.
 //
 proxy.on("proxyRes", function(proxyRes, req, res) {
+    //if proxRes.headers(
     lib.enableCors(req, res);
     modifyResponse(res, proxyRes, function (body) {
 	    return lib.jsonToGeoJSON(body);
