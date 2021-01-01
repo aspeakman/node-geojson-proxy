@@ -1,5 +1,5 @@
 // Function library
-process.env.NODE_ENV = "local_default"; // uses the settings in "local_default" to override "default"
+process.env.NODE_ENV = "local_default"; // uses any settings in "local_default" to override "default"
 const config = require('config');
 
 function enableCors (req, res) {
