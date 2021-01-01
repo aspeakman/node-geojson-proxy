@@ -1,5 +1,5 @@
 /**
- * This will create a proxy that can massage a target JSON response with location information into GEOJSON format.
+ * This will create a proxy that massages a target JSON response into GEOJSON format.
  * Settings are in the config directory by default
  */
 
@@ -8,7 +8,7 @@ var httpProxy = require("http-proxy");
 var modifyResponse = require("node-http-proxy-json");
 var lib = require("./lib")
 
-process.env.NODE_ENV = "local_default"; // use local settings to override the built in defaults
+process.env.NODE_ENV = "local_default"; // uses any settings in "local_default" to override "default"
 const config = require('config');
 
 // get proxy options from config
@@ -40,7 +40,7 @@ proxy.on("proxyRes", function(proxyRes, req, res) {
 });
 
 
-// Create  server and then proxies the request
+// Create  server which proxies the request
 var server = http.createServer(function (req, res) {
 
     if (req.method === 'OPTIONS') {
@@ -57,6 +57,3 @@ var server = http.createServer(function (req, res) {
 // Start proxying
 console.log("Starting GeoJSON proxy on port", config.port, "for", config.target);
 server.listen(config.port);
-
-
-
