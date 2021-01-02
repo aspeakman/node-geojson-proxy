@@ -64,6 +64,14 @@ function jsonToGeoJSON (body) {
 }
 
 function openAPIJSON (body) {
+    const read_methods = [ 'get', 'post', 'options' ];
+    for (var p in body.paths) { // path keys
+        for (var m in body.paths[p]) { // method keys
+            if (read_methods.indexOf(m) < 0) {
+                delete body.paths[p][m];
+            }
+        }
+    }
     return body; 
 }
 
