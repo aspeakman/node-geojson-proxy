@@ -37,8 +37,8 @@ proxy.on("proxyRes", function(proxyRes, req, res) {
     lib.corsHeaders(req, res);
     modifyResponse(res, proxyRes, function (body) {
         var ct_header = proxyRes.headers['content-type'] || '';
-        if (ct_header.indexOf('application/json') == 0) { 
-            return lib.jsonToGeoJSON(body); // massage the reponse only if it is proper JSON
+        if (ct_header.indexOf('application/json') == 0 || ct_header.indexOf('application/vnd.pgrst.object+json') == 0) { 
+            return lib.jsonToGeoJSON(body); // massage the response only if it is proper JSON
         } else if (ct_header.indexOf('application/openapi+json') == 0) {
             return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
         } else { 
