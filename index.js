@@ -34,11 +34,13 @@ proxy.on("error", function (err, req, res) {
 //
 proxy.on("proxyReq", function(proxyReq, req, res) {
     var accept_header = req.headers['accept'] || ''; // the requested content type
-    console.log('req2', req.headers);
+    console.log('req2', accept_header, config.geoAccept);
     if (accept_header.match(config.geoAccept)) {
+        console.log('matched');
 	    req.headers['accept'] = 'application/json'; // make actual request acceptable to the target
     }
-    console.log('req4', req.headers);
+    accept_header = req.headers['accept'] || '';
+    console.log('req4', accept_header);
 });
 
 // Listen for the `proxyRes` event on `proxy`.
