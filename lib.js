@@ -2,20 +2,20 @@
 process.env.NODE_ENV = "local_default"; // uses any settings in "local_default" to override "default"
 const config = require('config');
 
-function enableCors (req, res) {
-    if (!config.has('corsAllow')) return; // no CORS processing
-    const corsAllow = config.get('corsAllow');
+function corsHeaders (req, res) {
+    if (!config.has('corsAllow') || !req.headers['origin']) return; // no CORS processing
+    const corsAllow = config.get('corsAllow') || '*';
+    res.setHeader('access-control-allow-credentials', 'false');
     if (req.headers['access-control-request-method']) {
-        res.setHeader('access-control-allow-methods', 'POST, GET, OPTIONS'); // only allow read access
+        res.setHeader('access-control-allow-methods', 'GET, POST, OPTIONS'); // only allow read access
     }
     if (req.headers['access-control-request-headers']) {
         res.setHeader('access-control-allow-headers', req.headers['access-control-request-headers']); // agree to any request header
     }
-    res.setHeader('access-control-allow-credentials', 'false');
-    if (req.headers.origin && Array.isArray(corsAllow))  {
+    if (Array.isArray(corsAllow))  {
         for (const origin_match of corsAllow) {
-            if (req.headers.origin.match(origin_match)) { // does the pattern match this origin
-                res.setHeader('access-control-allow-origin', req.headers.origin);
+            if (req.headers['origin'].match(origin_match)) { // does the pattern match this origin
+                res.setHeader('access-control-allow-origin', req.headers['origin']);
                 res.setHeader('vary', 'Origin');
                 break;
             }
@@ -63,5 +63,9 @@ function jsonToGeoJSON (body) {
     return newbody; 
 }
 
+function openAPIJSON (body) {
+    return body; 
+}
+
 // export library functions
-module.exports = { jsonToGeoJSON, enableCors };
+module.exports = { jsonToGeoJSON, corsHeaders, openAPIJSON };
