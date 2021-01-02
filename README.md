@@ -1,10 +1,10 @@
 # node-geojson-proxy
 
-A configurable [node.js](https://nodejs.org/api/) proxy to provide [GeoJSON](https://geojson.org/) output from an online JSON target such as [PostgREST](https://postgrest.org/) 
+A configurable [node.js](https://nodejs.org/api/) proxy to provide read-only [GeoJSON](https://geojson.org/) output from an online JSON target such as [PostgREST](https://postgrest.org/) 
 
-1. Sets CORS headers based on allowed methods and origins
+1. Sets CORS headers with allowed methods and origins
 2. If necessary, reformats the JSON data output as a GeoJSON FeatureCollection based on the request Accept header
-3. Re-formats any OpenAPI output to remove inapplicable methods
+3. Re-formats any OpenAPI output to remove inapplicable write methods
 
 # Configuration
 
@@ -16,7 +16,7 @@ Note the geoJSON processing is based on finding named fields with expected geome
 
 Example:
 
-> { "point_pair": `[ "lng", "lat" `] }  # derives a GeoJSON Point from two fields named 'lng' and 'lat'
+> { "point_pair": \\\[ "lng", "lat" \\\] }  # derives a GeoJSON Point from two fields named 'lng' and 'lat'
 
-> { "geojson": "location", "types": `[ "Point" `] } # expects a 'location' field already containing a GeoJSON point eg a PostGIS geometry field
+> { "geojson": "location", "types": \\\[ "Point" \\\] } # expects a 'location' field already containing a GeoJSON point eg a PostGIS geometry field
 
