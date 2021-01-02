@@ -2,14 +2,20 @@
     "port": 9001 # the port the proxy server will expose
     
     "target": "http://localhost:9000" # the local target for JSON data that the proxy server will interface to 
+    
     "changeOrigin": false # true/false, changes the origin of the host header to the target URL
     
-    # asterisk to allow unretricted access OR a list of regular expressions matching allowed origins
-    # example of a list [ /^https?:\/\/geojson\.io/, /https?:\/\/example\.com/ ]
+    "targetMethods": [ "OPTIONS", "GET", "POST" ] # allowed HTTP verbs that the target responds to
+    
+    # EITHER a single string to specify one allowed origin or an asterisk (*) to allow unrestricted access OR a list of regular expressions matching allowed origins
+    # example of a list [ /^https?:\/\/geojson\.io/, /^https?:\/\/example\.com/ ]
     "corsAllow": "*" 
     
+    # request Accept header that indicates GeoJSON should be returned
+    "geoAccept": [ 'application/geo+json', 'vnd/geo+json' ]
+    
     # List of JSON fields with location information that will be used to create the GeoJSON Feature geometry (in order of priority). 
-    # The search stops when a matching field is found. Expected keys and values are as follow:
+    # The search stops when a matching field is found. Allowed keys and values are as follow:
     # "geojson" name of a field with the contents expected to be native geojson eg a PostGIS geometry (and the acceptable GeoJSON "types" it can contain)
     # "point_pair" an array of two long/lat field names (always in that order) which will be used to make a GeoJSON Point
     # "coordinates" name of a field with the contents expected to be an array to be used as the coordinates of the single GeoJSON "type" supplied
