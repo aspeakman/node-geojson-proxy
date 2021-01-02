@@ -2,6 +2,12 @@
 
 A configurable [node.js](https://nodejs.org/api/) proxy to provide [GeoJSON](https://geojson.org/) output from an online JSON target such as [PostgREST](https://postgrest.org/) 
 
+1. Sets CORS headers based on the allowed verbs
+2. Reformats the JSON data output as a GeoJSON collection based on the request Accept header
+3. Re-formats the OpenAPI output to remove inapplicable verbs
+
+# Install
+
 npm install
 node index.js
 
