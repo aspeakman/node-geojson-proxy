@@ -11,8 +11,8 @@
     # example of a list [ /^https?:\/\/geojson\.io/, /^https?:\/\/example\.com/ ]
     "corsAllow": "*" 
     
-    # request Accept header that indicates GeoJSON should be returned
-    "geoAccept": [ 'application/geo+json', 'vnd/geo+json' ]
+    # a regexp to match in the request Accept header that indicates GeoJSON should be returned
+    "geoAccept": /\b(?:application|vnd)\/geo\+json\b/
     
     # List of JSON fields with location information that will be used to create the GeoJSON Feature geometry (in order of priority). 
     # The search stops when a matching field is found. Allowed keys and values are as follow:
