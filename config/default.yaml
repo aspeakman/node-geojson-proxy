@@ -5,8 +5,6 @@
     
     "changeOrigin": false # true/false, changes the origin of the host header to the target URL
     
-    "targetMethods": [ "OPTIONS", "GET", "POST" ] # allowed HTTP verbs that the target responds to
-    
     # EITHER a single string to specify one allowed origin or an asterisk (*) to allow unrestricted access OR a list of regular expressions matching allowed origins
     # example of a list [ /^https?:\/\/geojson\.io/, /^https?:\/\/example\.com/ ]
     "corsAllow": "*" 
