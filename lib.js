@@ -43,11 +43,12 @@ function _extractRowGeometry (row, geoFields) {
 }
 
 function jsonToGeoJSON (body) {
-    var newbody = { type: "FeatureCollection", features: [] }; // always returns a collection
+    var newbody = null;
     if (!body || !config.has('geoFields')) return newbody; // empty collection if there are no geo related results
     const geoFields = config.get('geoFields');
     var feature;
     if (Array.isArray(body)) { // rows of data
+        newbody = { type: "FeatureCollection", features: [] }; // always returns a collection
         for (var row of body) {
             feature = { type: "Feature" };
             feature.geometry = _extractRowGeometry(row, geoFields); // note can alter the row, also result can be null
@@ -58,7 +59,8 @@ function jsonToGeoJSON (body) {
         feature = { type: "Feature" };
         feature.geometry = _extractRowGeometry(body, geoFields); // note can alter the body, also result can be null
         feature.properties = body;
-        newbody.features.push(feature); // always add a feature even if geometry is null = no location
+        //newbody.features.push(feature); // always add a feature even if geometry is null = no location
+        newbody = feature;
     }
     return newbody; 
 }
