@@ -33,14 +33,15 @@ proxy.on("error", function (err, req, res) {
 // Listen for the `proxyRes` event on `proxy`.
 //
 proxy.on("proxyRes", function(proxyRes, req, res) {
+    var ac_header = req.headers['accept'] || ''; // the acceptable content types
+    console.log('proxy res found geo request', ac_header);
     lib.corsHeaders(req, res);
     modifyResponse(res, proxyRes, function (body) {
 	var ct_header = proxyRes.headers['content-type'] || '';
-	var ac_header = proxyRes.headers['accept'] || '';
-        if (ct_header.indexOf('application/json') == 0 && ac_header.match(config.geoAccept)) { 
-	    return lib.jsonToGeoJSON(body); // massage the reponse only if it is proper JSON and we want to receive geoJSON
+	if (ct_header.indexOf('application/json') == 0 && ac_header.match(config.geoAccept)) { 
+            return lib.jsonToGeoJSON(body); // massage the reponse only if it is proper JSON and we want to receive geoJSON
         } else if (ct_header.indexOf('application/openapi+json') == 0) {
-	    return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
+	        return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
         } else { 
             return body; // otherwise return as is
         }
@@ -57,6 +58,8 @@ var server = http.createServer(function (req, res) {
         res.end();
         return;
     }
+	
+    console.log('server found geo request', req.headers['accept']);
 
     proxy.web(req, res);
 
