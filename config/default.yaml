@@ -10,7 +10,7 @@
     "corsAllow": "*" 
     
     # a regexp to match in the request Accept header that indicates GeoJSON should be returned
-    "geoAccept": /\b(?:application|vnd)\/geo\+json\b/
+    "geoAccept": '\\b(?:application|vnd)\\/geo\\+json\\b' # note this is a string so backslashes are doubled
     
     # List of JSON fields with location information that will be used to create the GeoJSON Feature geometry (in order of priority). 
     # The search stops when a matching field is found. Allowed keys and values are as follow:
