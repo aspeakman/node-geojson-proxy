@@ -34,19 +34,17 @@ proxy.on("error", function (err, req, res) {
 //
 proxy.on("proxyReq", function(proxyReq, req, res) {
     var accept_header = req.headers['accept'] || ''; // the requested content type
-    console.log('req1', proxyReq.headers);
     console.log('req2', req.headers);
     if (accept_header.match(config.geoAccept)) {
-	    proxyReq.headers['accept'] = 'application/json'; // make actual request acceptable to the target
+	    req.headers['accept'] = 'application/json'; // make actual request acceptable to the target
     }
-    console.log('req3', proxyReq.headers);
     console.log('req4', req.headers);
 });
 
 // Listen for the `proxyRes` event on `proxy`.
 //
 proxy.on("proxyRes", function(proxyRes, req, res) {
-	console.log('resq', req.headers);
+    console.log('resq', req.headers);
     var accept_header = req.headers['accept'] || ''; // the requested content type
     lib.corsHeaders(req, res);
     modifyResponse(res, proxyRes, function (body) {
