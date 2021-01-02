@@ -37,10 +37,10 @@ proxy.on("proxyRes", function(proxyRes, req, res) {
     modifyResponse(res, proxyRes, function (body) {
 	var ct_header = proxyRes.headers['content-type'] || '';
 	var ac_header = proxyRes.headers['accept'] || '';
-        if (ct_header.indexOf('application/json') == 0) { # also
-	    return lib.jsonToGeoJSON(body); // massage the reponse only if it is proper JSON
+        if (ct_header.indexOf('application/json') == 0 && ac_header ~ config.accept) { # also
+	    return lib.jsonToGeoJSON(body); // massage the reponse only if it is proper JSON and we want to receive geoJSON
         } else if (ct_header.indexOf('application/openapi+json') == 0) {
-	    return lib.OpenAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
+	    return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
         } else { 
             return body; // otherwise return as is
         }
