@@ -10,7 +10,7 @@ var lib = require("./lib")
 
 process.env.NODE_ENV = "local_default"; // uses any settings in "local_default" to override "default"
 const config = require('config');
-const geoAccept = new RegExp(config.geoAccept);
+//const geoAccept = new RegExp(config.geoAccept);
 
 // get proxy options from config
 var options = {
@@ -33,27 +33,12 @@ proxy.on("error", function (err, req, res) {
 
 // Listen for the `proxyRes` event on `proxy`.
 //
-proxy.on("proxyReq", function(proxyReq, req, res) {
-    var accept_header = req.headers['accept'] || ''; // the requested content type
-    console.log('req2', accept_header, geoAccept);
-    if (accept_header.match(geoAccept)) {
-        console.log('matched');
-	    req.headers['accept'] = 'application/json'; // make actual request acceptable to the target
-    }
-    accept_header = req.headers['accept'] || '';
-    console.log('req4', accept_header);
-});
-
-// Listen for the `proxyRes` event on `proxy`.
-//
 proxy.on("proxyRes", function(proxyRes, req, res) {
-    console.log('resq', req.headers);
-    var accept_header = req.headers['accept'] || ''; // the requested content type
     lib.corsHeaders(req, res);
     modifyResponse(res, proxyRes, function (body) {
         var ct_header = proxyRes.headers['content-type'] || '';
-        if (ct_header.indexOf('application/json') == 0 && accept_header.match(geoAccept)) { 
-            return lib.jsonToGeoJSON(body); // massage the reponse only if it is proper JSON and geoJSON was requested
+        if (ct_header.indexOf('application/json') == 0) { 
+            return lib.jsonToGeoJSON(body); // massage the reponse only if it is proper JSON
         } else if (ct_header.indexOf('application/openapi+json') == 0) {
             return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
         } else { 
