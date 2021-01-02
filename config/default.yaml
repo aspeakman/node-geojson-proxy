@@ -6,11 +6,11 @@
     "changeOrigin": false # true/false, changes the origin of the host header to the target URL
     
     # EITHER a single string to specify one allowed origin or an asterisk (*) to allow unrestricted access OR a list of regular expressions matching allowed origins
-    # example of a list [ '^https?://geojson\\.io', '^https?://example\\.com' ] # note double escape characters for \ but not /
+    # example of a list [ '^https?://geojson\.io', '^https?://example\.com' ] # note in YAML no need to double escape backslashes
     "corsAllow": "*" 
     
     # a regexp to match in the request Accept header that indicates GeoJSON should be returned
-    "geoAccept": /\b(?:application|vnd)\/geo\+json\b/ # note double escape characters for \ but not /
+    "geoAccept": '\b(?:application|vnd)/geo\+json\b' # note in YAML no need to double escape backslashes
     
     # List of JSON fields with location information that will be used to create the GeoJSON Feature geometry (in order of priority). 
     # The search stops when a matching field is found. Allowed keys and values are as follow:
