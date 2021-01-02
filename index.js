@@ -10,7 +10,7 @@ var lib = require("./lib")
 
 process.env.NODE_ENV = "local_default"; // uses any settings in "local_default" to override "default"
 const config = require('config');
-const geoAccept = new Regexp(config.geoAccept);
+const geoAccept = new RegExp(config.geoAccept);
 
 // get proxy options from config
 var options = {
