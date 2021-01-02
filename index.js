@@ -33,13 +33,16 @@ proxy.on("error", function (err, req, res) {
 // Listen for the `proxyRes` event on `proxy`.
 //
 proxy.on("proxyRes", function(proxyRes, req, res) {
-    lib.enableCors(req, res);
+    lib.corsHeaders(req, res);
     modifyResponse(res, proxyRes, function (body) {
-	var ct_header = proxyRes.headers['content-type'];
-        if (ct_header == null || ct_header.indexOf('application/json') == 0) {
+	var ct_header = proxyRes.headers['content-type'] || '';
+	var ac_header = proxyRes.headers['accept'] || '';
+        if (ct_header.indexOf('application/json') == 0) { # also
 	    return lib.jsonToGeoJSON(body); // massage the reponse only if it is proper JSON
+        } else if (ct_header.indexOf('application/openapi+json') == 0) {
+	    return lib.OpenAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
         } else { 
-            return body; 
+            return body; // otherwise return as is
         }
        });
 });
@@ -49,8 +52,8 @@ proxy.on("proxyRes", function(proxyRes, req, res) {
 var server = http.createServer(function (req, res) {
 
     if (req.method === 'OPTIONS') {
-        lib.enableCors(req, res);
-        res.writeHead(200);
+        lib.corsHeaders(req, res);
+        res.writeHead(200, { 'Allow': 'GET, POST, OPTIONS' } );
         res.end();
         return;
     }
