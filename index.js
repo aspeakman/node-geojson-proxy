@@ -13,29 +13,18 @@ const config = require('config');
 //const geoAccept = new RegExp(config.geoAccept);
 
 // get proxy options from config
-var options = {
-    target: config.target,
-    changeOrigin: config.changeOrigin
+var options = {  target: config.target }
+if (config.has('changeOrigin') && config.get('changeOrigin') === true) {
+    options.changeOrigin = true;
 }
-
-// Create a proxy server using the options
-var proxy = httpProxy.createProxyServer(options);
 
 var sendError = function(res, err) {
     res.writeHead(500, { 'Content-Type': 'text/plain' } );
     res.end('An error occured in the GeoJSON proxy');
 };
 
-// error handling
-proxy.on("error", function (err, req, res) {
-    sendError(res, err);
-});
-
-// Listen for the `proxyRes` event on `proxy`.
-//
-proxy.on("proxyRes", function(proxyRes, req, res) {
-    lib.corsHeaders(req, res);
-    modifyResponse(res, proxyRes, function (body) {
+var modifyGeo = function(res, proxyRes) { // modify GEOJSON and OpenAPI JSON
+	modifyResponse(res, proxyRes, function (body) {
         var ct_header = proxyRes.headers['content-type'] || '';
         if (ct_header.indexOf('application/json') == 0 || ct_header.indexOf('application/vnd.pgrst.object+json') == 0) { 
             return lib.jsonToGeoJSON(body); // massage the response only if it is proper JSON
@@ -45,8 +34,41 @@ proxy.on("proxyRes", function(proxyRes, req, res) {
             return body; // otherwise return as is
         }
        });
+};
+
+var modifyNoGeo = function(res, proxyRes) { // just modify the OpenAPI JSON
+	modifyResponse(res, proxyRes, function (body) {
+        var ct_header = proxyRes.headers['content-type'] || '';
+        if (ct_header.indexOf('application/openapi+json') == 0) {
+            return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
+        } else { 
+            return body; // otherwise return as is
+        }
+       });
+};
+
+// Create a proxy server using the options
+var geoproxy = httpProxy.createProxyServer(options);
+var nogeoproxy = httpProxy.createProxyServer(options);
+
+// error handling
+geoproxy.on("error", function (err, req, res) {
+    sendError(res, err);
+});
+nogeoproxy.on("error", function (err, req, res) {
+    sendError(res, err);
 });
 
+// Listen for the `proxyRes` event on `proxy`.
+//
+geoproxy.on("proxyRes", function(proxyRes, req, res) {
+    lib.corsHeaders(req, res);
+    modifyGeo(res, proxyRes);
+});
+nogeoproxy.on("proxyRes", function(proxyRes, req, res) {
+    lib.corsHeaders(req, res);
+    modifyNoGeo(res, proxyRes);
+});
 
 // Create  server which proxies the request
 var server = http.createServer(function (req, res) {
@@ -58,7 +80,7 @@ var server = http.createServer(function (req, res) {
         return;
     }
 	
-    proxy.web(req, res);
+    geoproxy.web(req, res);
 
 });
 
