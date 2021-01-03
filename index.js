@@ -44,6 +44,7 @@ var modifyGeo = function(res, proxyRes) { // modify GEOJSON and OpenAPI JSON
 
 var modifyNoGeo = function(res, proxyRes) { // just modify the OpenAPI JSON
 	modifyResponse(res, proxyRes, function (body) {
+		console.log('in nogeo');
 		var ct_header = proxyRes.headers['content-type'] || '';
 		if (ct_header.indexOf('application/openapi+json') == 0) {
 		    return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
@@ -71,6 +72,7 @@ if (geoCollectionAccept) {
     });
     nogeoproxy.on("proxyRes", function(proxyRes, req, res) {
         lib.corsHeaders(req, res);
+	console.log('nogeo');
         modifyNoGeo(res, proxyRes);
     });
 }
@@ -98,7 +100,7 @@ var server = http.createServer(function (req, res) {
         } else {
             geoproxy.web(req, res); // default is to always massage into GeoJSON
         }
-	}
+}
 
 });
 
