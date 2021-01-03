@@ -10,6 +10,10 @@ if (config.has('corsAllow')) {
         }
     }
 }
+var geoFields = null;
+if (config.has('geoFields')) {
+    geoFields = config.get('geoFields');
+}
 
 function corsHeaders (req, res) {
     if (!corsAllow || !req.headers['origin']) return; // no CORS processing
@@ -51,8 +55,7 @@ function _extractRowGeometry (row, geoFields) {
 }
 
 function jsonToGeoJSON (body) {
-    if (!config.has('geoFields') || !config.get('geoFields')) return body; // return data as is if no geo related results are specified
-    const geoFields = config.get('geoFields');
+    if (!geoFields) return body; // return data as is if no geo related results are specified
     var feature; var newbody;
     if (Array.isArray(body)) { // rows of data
         newbody = { type: "FeatureCollection", features: [] }; // always returns a collection
