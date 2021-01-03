@@ -16,17 +16,20 @@ if (config.has('geoFields')) {
 }
 
 function corsHeaders (req, res) {
-    if (!corsAllow || !req.headers['origin']) return; // no CORS processing
+    //if (!corsAllow || !req.headers['origin']) return; // no CORS processing
+    if (!corsAllow) return;
     res.setHeader('access-control-allow-credentials', 'false');
     if (req.headers['access-control-request-method']) {
         res.setHeader('access-control-allow-methods', 'GET, POST, OPTIONS'); // only allow read access
     }
     if (req.headers['access-control-request-headers']) {
         res.setHeader('access-control-allow-headers', req.headers['access-control-request-headers']); // agree to any request header
+        // or "Origin,Authorization,X-Requested-With,Content-Type,Accept"
     }
     if (Array.isArray(corsAllow))  {
+        if (!req.headers['origin']) return;
         for (const origin_match of corsAllow) {
-            if (req.headers['origin'].match(origin_match)) { // does the pattern match to this origin
+            if (req.headers['origin'].match(origin_match)) { // does the pattern match this origin
                 res.setHeader('access-control-allow-origin', req.headers['origin']);
                 res.setHeader('vary', 'Origin');
                 break;
