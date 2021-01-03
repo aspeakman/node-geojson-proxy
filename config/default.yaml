@@ -9,9 +9,6 @@
     # example of a list [ '^https?://geojson\.io', '^https?://example\.com' ] # note in YAML no need to double escape backslashes
     "corsAllow": "*" 
     
-    # a regexp string to match in the request Accept header that indicates GeoJSON should be returned
-    "geoAccept": '\b(?:application|vnd)/geo\+json\b' # note in YAML no need to double escape backslashes
-    
     # List of JSON fields with location information that will be used to create the GeoJSON Feature geometry (in order of priority). 
     # The search stops when a matching field is found. Allowed keys and values are as follow:
     # "geojson" name of a field with the contents expected to be native geojson eg a PostGIS geometry (and the acceptable GeoJSON "types" it can contain)
@@ -26,4 +23,9 @@
         - { "coordinates": "polygon", "type": "Polygon" }
         - { "coordinates": "multipolygon", "type": "MultiPolygon" }
   
+    # a regexp string to match in the request Accept header that indicates a GeoJSON FeatureCollection should be returned
+    "geoMultiAccept": '\b(?:application|vnd)/geo\+json\b' # note in YAML no need to double escape backslashes
+    # a regexp string to match in the request Accept header that indicates a GeoJSON Feature should be returned
+    "geoSingleAccept": '\bapplication/vnd\.pgrst\.object\+geojson\b' # note in YAML no need to double escape backslashes
+    
 
