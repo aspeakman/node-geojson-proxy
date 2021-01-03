@@ -5,10 +5,13 @@
     
     "changeOrigin": false # true/false, changes the origin of the host header to the target URL
     
-    # EITHER a single string to specify one allowed origin or an asterisk (*) to allow unrestricted access OR a list of regular expression strings matching allowed origins
-    # example of a list [ '^https?://geojson\.io', '^https?://example\.com' ] # note in YAML no need to double escape backslashes
+    # EITHER a single string to specify ONE allowed origin 
+    # OR an asterisk (*) to allow unrestricted access 
+    # OR a list of regular expression strings matching allowed origins
     # NOTE if this setting is absent or empty, there is no CORS processing
     "corsAllow": "*" 
+    # "corsAllow": "wwww.example.com" 
+    # "corsAllow": [ '^https?://geojson\.io', '^https?://example\.com' ] # note in YAML no need to double escape backslashes
     
     # List of JSON fields with location information that will be used to create the GeoJSON Feature geometry (in order of priority). 
     # The search stops when a matching field is found. Allowed keys and values are as follow:
@@ -31,7 +34,7 @@
         - "application/geo+json"
         - "vnd/geo+json"
     # List of request Accept headers that indicates a single GeoJSON Feature should be returned (see Postgrest documentation)
-    # NOTE if this setting is absent or empty, then only data with Accept set to 'application/vnd.pgrst.object+json' is processed as a  GeoJSON Feature
+    # NOTE if this setting is absent or empty, then only data with Accept set to 'application/vnd.pgrst.object+json' is processed as a GeoJSON Feature
     "geoFeatureAccept":
         - "application/vnd.pgrst.object+geojson"
     
