@@ -14,24 +14,25 @@ At a minimum you will need to define your own 'port' and 'target'
 
 ## Geometric fields
 
-The geoJSON processing is based creating Features from named fields with expected geometric contents. The expected contents are define in 'geoFields'. Examples are as follows:
+The geoJSON processing is based on creating GeoJSON Features from named fields with expected geometric contents. The expected contents are define in 'geoFields'. Examples are as follows:
 
-Derive a Feature with a GeoJSON Point created from two fields named 'lng' and 'lat'
+Derive a Feature containing a GeoJSON Point created from two fields named 'lng' and 'lat'
 > { "point_pair": [ "lng", "lat" ] }
 
 Derive a Feature from a field already containing valid GeoJSON eg a PostGIS geometry field (in this case a Point taken from a field named 'location')
 > { "geojson": "location", "types": [ "Point" ] }
 
-Derive a Feature from a field containing coordinate array(s) of lng, lat data (in this case a Polygon is created from coordinates in a field named 'bounds')
+Derive a Feature from a field containing coordinate array(s) of lng, lat data (in this case a Polygon is created using coordinates in a field named 'bounds')
 > { "coordinates": "bounds", "type": "Polygon" }
 
 ## 'Accept' headers
 
-You can set whether the proxy transforms any JSON response content or works only if the request has a particular 'Accept' header. The expected contents are defined in 'geoCollectionAccept', example as follows:
+You can set whether the proxy transforms any JSON response content or works only if the request has a particular 'Accept' header. The expected Accept headers are defined in 'geoCollectionAccept', example as follows:
 
 > geoCollectionAccept = [ 'application/geo+json',  'vnd/geo+json' ]
 
 # Operation
 
 > npm install
+
 > node index.js
