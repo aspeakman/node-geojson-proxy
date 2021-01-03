@@ -17,12 +17,11 @@ Note the geoJSON processing is based on finding named fields with expected geome
 Derive a GeoJSON Point from two fields named 'lng' and 'lat'
 > { "point_pair": \\\[ "lng", "lat" \\\] }
 
-Derive from a 'location' field already containing valid GeoJSON eg a PostGIS geometry field (in this case a lng, lat point)
-> { "geojson": "location", "types": \\\[ "Point" \\\] }
+Derive from a field already containing valid GeoJSON eg a PostGIS geometry field (in this case a lng, lat Point derived from a field named 'location')
+> { "geojson": "location", "types": \\[ "Point" \\] }
 
-Derive from a a 'bounds' field containing the array(s) of lng, lat points for a polygon GeoJSON geometry
-> { "coordinates": "polygon", "type": "Polygon" }
+Derive from a field containing coordinate array(s) of lng, lat data (in this case a Polygon derived from a field named 'bounds')
+> { "coordinates": "bounds", "type": "Polygon" }
 
-You can choose whether the proxy transforms any JSON response content or only if the request has a particular 'Accept' header. For example
+You can also choose whether the proxy transforms any JSON response content or only if the request has a particular 'Accept' header. For example `application/geo+json`
 
-> application/geo+json
