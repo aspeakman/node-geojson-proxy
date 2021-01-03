@@ -10,13 +10,15 @@ var lib = require("./lib")
 
 process.env.NODE_ENV = "local_default"; // uses any settings in "local_default" to override "default"
 const config = require('config');
-//const geoAccept = new RegExp(config.geoAccept);
 
 // get proxy options from config
-var options = {  target: config.target }
-if (config.has('changeOrigin') && config.get('changeOrigin') === true) {
-    options.changeOrigin = true;
-}
+var options = {  
+	target: config.get('target'),
+	changeOrigin: config.get('changeOrigin') }
+
+geoAccept = null; var geoSingleAccept = null;
+if (config.has('geoSingleAccept') && config.get('geoSingleAccept')) {
+const geoSingleAccept = new RegExp(config.geoAccept);
 
 var sendError = function(res, err) {
     res.writeHead(500, { 'Content-Type': 'text/plain' } );
@@ -85,5 +87,5 @@ var server = http.createServer(function (req, res) {
 });
 
 // Start proxying
-console.log("Starting GeoJSON proxy on port", config.port, "for", config.target);
-server.listen(config.port);
+console.log("Starting GeoJSON proxy on port", config.get('port'), "for", config.get('target'));
+server.listen(config.get('port'));
