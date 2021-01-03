@@ -30,12 +30,10 @@
   
     # List of request Accept headers that indicates a GeoJSON FeatureCollection should be returned
     # NOTE if this setting is absent or empty, all output is GeoJSON processed
-    "geoCollectionAccept": 
-        - "application/geo+json"
-        - "vnd/geo+json"
+    "geoCollectionAccept": [ "application/geo+json", "vnd/geo+json" ]
+    
     # List of request Accept headers that indicates a single GeoJSON Feature should be returned (see Postgrest documentation)
     # NOTE if this setting is absent or empty, then only data with Accept set to 'application/vnd.pgrst.object+json' is processed as a GeoJSON Feature
-    "geoFeatureAccept":
-        - "application/vnd.pgrst.object+geojson"
+    "geoFeatureAccept": [ "application/vnd.pgrst.object+geojson" ]
     
 
