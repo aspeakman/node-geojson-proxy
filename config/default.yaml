@@ -25,18 +25,14 @@
         - { "coordinates": "polygon", "type": "Polygon" }
         - { "coordinates": "multipolygon", "type": "MultiPolygon" }
   
-    # a regexp string to match in the request Accept header that indicates a GeoJSON FeatureCollection should be returned
+    # List of request Accept headers that indicates a GeoJSON FeatureCollection should be returned
     # NOTE if this setting is absent or empty, all output is GeoJSON processed
-    "geoMultiAccept": '\b(?:application|vnd)/geo\+json\b' # note in YAML no need to double escape backslashes
-    
-    # a regexp string to match in the request Accept header that indicates a single GeoJSON Feature should be returned
-    # NOTE if this setting is absent or empty, processing of single entities requires 'application/vnd.pgrst.object+json' as indicated in PostGrest docs
-    "geoSingleAccept": '\bapplication/vnd\.pgrst\.object\+geojson\b' # note in YAML no need to double escape backslashes
-    
-    # List of JSON fields with location information that will be used to create the GeoJSON Feature geometry (in order of priority). 
-    "geoAccept": 
+    "geoCollectionAccept": 
         - "application/geo+json"
         - "vnd/geo+json"
+    # List of request Accept headers that indicates a single GeoJSON Feature should be returned (see Postgrest documentation)
+    # NOTE if this setting is absent or empty, then only data with Accept set to 'application/vnd.pgrst.object+json' is processed as a  GeoJSON Feature
+    "geoFeatureAccept":
         - "application/vnd.pgrst.object+geojson"
     
 
