@@ -29,29 +29,29 @@ var sendError = function(res, err) {
     res.end('An error occured in the GeoJSON proxy');
 };
 
-/*var modifyGeo = function(res, proxyRes) { // modify GEOJSON and OpenAPI JSON
+var modifyGeo = function(res, proxyRes) { // modify GEOJSON and OpenAPI JSON
 	modifyResponse(res, proxyRes, function (body) {
-        var ct_header = proxyRes.getHeader('content-type') || '';
-        if (ct_header.indexOf('application/json') == 0 || ct_header.indexOf('application/vnd.pgrst.object+json') == 0) { 
-            return lib.jsonToGeoJSON(body); // massage the response only if it is proper JSON
-        } else if (ct_header.indexOf('application/openapi+json') == 0) {
-            return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
-        } else { 
-            return body; // otherwise return as is
-        }
+		var ct_header = proxyRes.headers['content-type'] || '';
+		if (ct_header.indexOf('application/json') == 0 || ct_header.indexOf('application/vnd.pgrst.object+json') == 0) { 
+		    return lib.jsonToGeoJSON(body); // massage the response only if it is proper JSON
+		} else if (ct_header.indexOf('application/openapi+json') == 0) {
+		    return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
+		} else { 
+		    return body; // otherwise return as is
+		}
        });
 };
 
 var modifyNoGeo = function(res, proxyRes) { // just modify the OpenAPI JSON
 	modifyResponse(res, proxyRes, function (body) {
-        var ct_header = proxyRes.getHeader('content-type') || '';
-        if (ct_header.indexOf('application/openapi+json') == 0) {
-            return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
-        } else { 
-            return body; // otherwise return as is
-        }
+		var ct_header = proxyRes.headers['content-type'] || '';
+		if (ct_header.indexOf('application/openapi+json') == 0) {
+		    return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
+		} else { 
+		    return body; // otherwise return as is
+		}
        });
-};*/
+};
 
 // Create a proxy server using the options
 var geoproxy = httpProxy.createProxyServer(options);
@@ -60,16 +60,7 @@ geoproxy.on("error", function (err, req, res) { // error handling
 });
 geoproxy.on("proxyRes", function(proxyRes, req, res) { // CORS and modify response
     lib.corsHeaders(req, res);
-    modifyResponse(res, proxyRes, function (body) {
-        var ct_header = proxyRes.getHeader('content-type') || '';
-        if (ct_header.indexOf('application/json') == 0 || ct_header.indexOf('application/vnd.pgrst.object+json') == 0) { 
-            return lib.jsonToGeoJSON(body); // massage the response only if it is proper JSON
-        } else if (ct_header.indexOf('application/openapi+json') == 0) {
-            return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
-        } else { 
-            return body; // otherwise return as is
-        }
-       });
+    modifyGeo(res, proxyRes);
 });
 
 var nogeoproxy = null; // if necessary also create a no geo proxy server using the options
@@ -80,14 +71,7 @@ if (geoCollectionAccept) {
     });
     nogeoproxy.on("proxyRes", function(proxyRes, req, res) {
         lib.corsHeaders(req, res);
-        modifyResponse(res, proxyRes, function (body) {
-        var ct_header = proxyRes.getHeader('content-type') || '';
-        if (ct_header.indexOf('application/openapi+json') == 0) {
-            return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
-        } else { 
-            return body; // otherwise return as is
-        }
-       });
+        modifyNoGeo(res, proxyRes);
     });
 }
 
