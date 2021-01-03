@@ -33,4 +33,10 @@
     # NOTE if this setting is absent or empty, processing of single entities requires 'application/vnd.pgrst.object+json' as indicated in PostGrest docs
     "geoSingleAccept": '\bapplication/vnd\.pgrst\.object\+geojson\b' # note in YAML no need to double escape backslashes
     
+    # List of JSON fields with location information that will be used to create the GeoJSON Feature geometry (in order of priority). 
+    "geoAccept": 
+        - "application/geo+json"
+        - "vnd/geo+json"
+        - "application/vnd.pgrst.object+geojson"
+    
 
