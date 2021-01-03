@@ -16,9 +16,10 @@ var options = {
 	target: config.get('target'),
 	changeOrigin: config.get('changeOrigin') }
 
-geoAccept = null; var geoSingleAccept = null;
-if (config.has('geoSingleAccept') && config.get('geoSingleAccept')) {
-const geoSingleAccept = new RegExp(config.geoAccept);
+var geoAccept = null;
+if (config.has('geoAccept') && config.get('geoSingleAccept') ) {
+    geoAccept = config.get('geoSingleAccept');
+}
 
 var sendError = function(res, err) {
     res.writeHead(500, { 'Content-Type': 'text/plain' } );
@@ -51,7 +52,10 @@ var modifyNoGeo = function(res, proxyRes) { // just modify the OpenAPI JSON
 
 // Create a proxy server using the options
 var geoproxy = httpProxy.createProxyServer(options);
-var nogeoproxy = httpProxy.createProxyServer(options);
+var nogeoproxy = null;
+if (geoAccept) {
+    nogeoproxy = httpProxy.createProxyServer(options);
+}
 
 // error handling
 geoproxy.on("error", function (err, req, res) {
@@ -80,9 +84,15 @@ var server = http.createServer(function (req, res) {
         res.writeHead(200, { 'Allow': 'GET, POST, OPTIONS' } );
         res.end();
         return;
-    }
-	
-    geoproxy.web(req, res);
+    } else if (req.method === 'GET' || req.method === 'POST') {
+    	if (geoAccept) {
+            if (header in 
+                geoproxy.web(req, res);
+            else
+        } else {
+            geoproxy.web(req, res); // defaul is to always massage into GeoJSON
+        }
+	}
 
 });
 
