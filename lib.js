@@ -1,10 +1,18 @@
 // Function library
 process.env.NODE_ENV = "local_default"; // uses any settings in "local_default" to override "default"
 const config = require('config');
+var corsAllow = null;
+if (config.has('corsAllow')) {
+    corsAllow = config.get('corsAllow') || '*';
+    if (Array.isArray(corsAllow)) {
+        for (var ca of corsAllow) {
+            ca = new RegExp(ca);
+        }
+    }
+}
 
 function corsHeaders (req, res) {
-    if (!config.has('corsAllow') || !req.headers['origin']) return; // no CORS processing
-    const corsAllow = config.get('corsAllow') || '*';
+    if (!corsAllow || !req.headers['origin']) return; // no CORS processing
     res.setHeader('access-control-allow-credentials', 'false');
     if (req.headers['access-control-request-method']) {
         res.setHeader('access-control-allow-methods', 'GET, POST, OPTIONS'); // only allow read access
@@ -14,7 +22,7 @@ function corsHeaders (req, res) {
     }
     if (Array.isArray(corsAllow))  {
         for (const origin_match of corsAllow) {
-            if (req.headers['origin'].match(origin_match)) { // does the pattern match this origin
+            if (req.headers['origin'].match(origin_match)) { // does the pattern match to this origin
                 res.setHeader('access-control-allow-origin', req.headers['origin']);
                 res.setHeader('vary', 'Origin');
                 break;
