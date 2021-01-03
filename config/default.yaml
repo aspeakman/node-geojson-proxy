@@ -7,6 +7,7 @@
     
     # EITHER a single string to specify one allowed origin or an asterisk (*) to allow unrestricted access OR a list of regular expression strings matching allowed origins
     # example of a list [ '^https?://geojson\.io', '^https?://example\.com' ] # note in YAML no need to double escape backslashes
+    # NOTE if this setting is absent or empty, there is no CORS processing
     "corsAllow": "*" 
     
     # List of JSON fields with location information that will be used to create the GeoJSON Feature geometry (in order of priority). 
@@ -14,6 +15,7 @@
     # "geojson" name of a field with the contents expected to be native geojson eg a PostGIS geometry (and the acceptable GeoJSON "types" it can contain)
     # "point_pair" an array of two long/lat field names (always in that order) which will be used to make a GeoJSON Point
     # "coordinates" name of a field with the contents expected to be an array to be used as the coordinates of the single GeoJSON "type" supplied
+    # NOTE if this setting is absent or empty, there is no GeoJSON processing
     "geoFields":  
         - { "geojson": "location", "types": [ "Point" ] }
         - { "geojson": "borders", "types": [ "Polygon", "MultiPolygon" ] }
@@ -24,8 +26,11 @@
         - { "coordinates": "multipolygon", "type": "MultiPolygon" }
   
     # a regexp string to match in the request Accept header that indicates a GeoJSON FeatureCollection should be returned
+    # NOTE if this setting is absent or empty, all output is GeoJSON processed
     "geoMultiAccept": '\b(?:application|vnd)/geo\+json\b' # note in YAML no need to double escape backslashes
-    # a regexp string to match in the request Accept header that indicates a GeoJSON Feature should be returned
+    
+    # a regexp string to match in the request Accept header that indicates a single GeoJSON Feature should be returned
+    # NOTE if this setting is absent or empty, processing of single entities requires 'application/vnd.pgrst.object+json' as indicated in PostGrest docs
     "geoSingleAccept": '\bapplication/vnd\.pgrst\.object\+geojson\b' # note in YAML no need to double escape backslashes
     
 
