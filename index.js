@@ -85,12 +85,12 @@ var server = http.createServer(function (req, res) {
         return;
     } else if (req.method === 'GET' || req.method === 'POST') {
     	if (nogeoproxy) {
-            var ac_header = req.headers['accept] || '';
+            var ac_header = req.headers['accept'] || '';
             if (ac_header && geoCollectionAccept.indexOf(ac_header) >= 0) { 
-                req.headers['accept] = 'application/json';
+                req.headers['accept'] = 'application/json';
                 geoproxy.web(req, res);
             } else if (ac_header && geoFeatureAccept && geoFeatureAccept.indexOf(ac_header) >= 0) {
-                req.headers['accept] = 'application/vnd.pgrst.object+json';
+                req.headers['accept'] = 'application/vnd.pgrst.object+json';
                 geoproxy.web(req, res);
             } else {
                 nogeoproxy.web(req, res); // do not massage into GeoJSON if the Accept headers dont match
