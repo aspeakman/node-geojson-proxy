@@ -16,9 +16,12 @@ var options = {
 	target: config.get('target'),
 	changeOrigin: config.get('changeOrigin') }
 
-var geoAccept = null;
-if (config.has('geoAccept') && config.get('geoSingleAccept') ) {
-    geoAccept = config.get('geoSingleAccept');
+var geoCollectionAccept = null; var geoFeatureAccept = null;
+if (config.has('geoCollectionAccept') && config.get('geoCollectionAccept')) {
+    geoCollectionAccept = config.get('geoCollectionAccept');
+    if (config.has('geoFeatureAccept') && config.get('geoFeatureAccept')) {
+        geoFeatureAccept = config.get('geoFeatureAccept');
+    }
 }
 
 var sendError = function(res, err) {
@@ -28,7 +31,7 @@ var sendError = function(res, err) {
 
 var modifyGeo = function(res, proxyRes) { // modify GEOJSON and OpenAPI JSON
 	modifyResponse(res, proxyRes, function (body) {
-        var ct_header = proxyRes.headers['content-type'] || '';
+        var ct_header = proxyRes.getHeader('content-type') || '';
         if (ct_header.indexOf('application/json') == 0 || ct_header.indexOf('application/vnd.pgrst.object+json') == 0) { 
             return lib.jsonToGeoJSON(body); // massage the response only if it is proper JSON
         } else if (ct_header.indexOf('application/openapi+json') == 0) {
@@ -41,7 +44,7 @@ var modifyGeo = function(res, proxyRes) { // modify GEOJSON and OpenAPI JSON
 
 var modifyNoGeo = function(res, proxyRes) { // just modify the OpenAPI JSON
 	modifyResponse(res, proxyRes, function (body) {
-        var ct_header = proxyRes.headers['content-type'] || '';
+        var ct_header = proxyRes.getHeader('content-type') || '';
         if (ct_header.indexOf('application/openapi+json') == 0) {
             return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
         } else { 
@@ -52,31 +55,27 @@ var modifyNoGeo = function(res, proxyRes) { // just modify the OpenAPI JSON
 
 // Create a proxy server using the options
 var geoproxy = httpProxy.createProxyServer(options);
-var nogeoproxy = null;
-if (geoAccept) {
-    nogeoproxy = httpProxy.createProxyServer(options);
-}
-
-// error handling
-geoproxy.on("error", function (err, req, res) {
+geoproxy.on("error", function (err, req, res) { // error handling
     sendError(res, err);
 });
-nogeoproxy.on("error", function (err, req, res) {
-    sendError(res, err);
-});
-
-// Listen for the `proxyRes` event on `proxy`.
-//
-geoproxy.on("proxyRes", function(proxyRes, req, res) {
+geoproxy.on("proxyRes", function(proxyRes, req, res) { // CORS and modify response
     lib.corsHeaders(req, res);
     modifyGeo(res, proxyRes);
 });
-nogeoproxy.on("proxyRes", function(proxyRes, req, res) {
-    lib.corsHeaders(req, res);
-    modifyNoGeo(res, proxyRes);
-});
 
-// Create  server which proxies the request
+var nogeoproxy = null; // if necessary also create a no geo proxy server using the options
+if (geoCollectionAccept) {
+    nogeoproxy = httpProxy.createProxyServer(options);
+    nogeoproxy.on("error", function (err, req, res) {
+        sendError(res, err);
+    });
+    nogeoproxy.on("proxyRes", function(proxyRes, req, res) {
+        lib.corsHeaders(req, res);
+        modifyNoGeo(res, proxyRes);
+    });
+}
+
+// Create real server which proxies the request
 var server = http.createServer(function (req, res) {
 
     if (req.method === 'OPTIONS') {
@@ -85,12 +84,19 @@ var server = http.createServer(function (req, res) {
         res.end();
         return;
     } else if (req.method === 'GET' || req.method === 'POST') {
-    	if (geoAccept) {
-            if (header in 
+    	if (nogeoproxy) {
+            var ac_header = req.getHeader('accept') || '';
+            if (ac_header && geoCollectionAccept.indexOf(ac_header) >= 0) { 
+                req.setHeader('accept', 'application/json');
                 geoproxy.web(req, res);
-            else
+            } else if (ac_header && geoFeatureAccept && geoFeatureAccept.indexOf(ac_header) >= 0) {
+                req.setHeader('accept', 'application/vnd.pgrst.object+json');
+                geoproxy.web(req, res);
+            } else {
+                nogeoproxy.web(req, res); // do not massage into GeoJSON if the Accept headers dont match
+            }
         } else {
-            geoproxy.web(req, res); // defaul is to always massage into GeoJSON
+            geoproxy.web(req, res); // default is to always massage into GeoJSON
         }
 	}
 
