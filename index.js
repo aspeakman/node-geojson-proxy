@@ -16,6 +16,7 @@ var options = {
 	target: config.get('target'),
 	changeOrigin: config.get('changeOrigin') }
 
+// settings for procesing of request Accept headers
 var geoCollectionAccept = null; var geoFeatureAccept = null;
 if (config.has('geoCollectionAccept') && config.get('geoCollectionAccept')) {
     geoCollectionAccept = config.get('geoCollectionAccept');
@@ -44,7 +45,6 @@ var modifyGeo = function(res, proxyRes) { // modify GEOJSON and OpenAPI JSON
 
 var modifyNoGeo = function(res, proxyRes) { // just modify the OpenAPI JSON
 	modifyResponse(res, proxyRes, function (body) {
-		console.log('in nogeo');
 		var ct_header = proxyRes.headers['content-type'] || '';
 		if (ct_header.indexOf('application/openapi+json') == 0) {
 		    return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
@@ -54,7 +54,7 @@ var modifyNoGeo = function(res, proxyRes) { // just modify the OpenAPI JSON
        });
 };
 
-// Create a proxy server using the options
+// Create a geo proxy server using the options
 var geoproxy = httpProxy.createProxyServer(options);
 geoproxy.on("error", function (err, req, res) { // error handling
     sendError(res, err);
@@ -64,7 +64,7 @@ geoproxy.on("proxyRes", function(proxyRes, req, res) { // CORS and modify respon
     modifyGeo(res, proxyRes);
 });
 
-var nogeoproxy = null; // if necessary also create a no geo proxy server using the options
+var nogeoproxy = null; // if necessary also create a no geo proxy server using the options (used when the Accept header does not match)
 if (geoCollectionAccept) {
     nogeoproxy = httpProxy.createProxyServer(options);
     nogeoproxy.on("error", function (err, req, res) {
@@ -72,7 +72,6 @@ if (geoCollectionAccept) {
     });
     nogeoproxy.on("proxyRes", function(proxyRes, req, res) {
         lib.corsHeaders(req, res);
-	console.log('nogeo');
         modifyNoGeo(res, proxyRes);
     });
 }
