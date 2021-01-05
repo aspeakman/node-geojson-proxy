@@ -103,5 +103,5 @@ dist
 # TernJS port file
 .tern-port
 
-# Local config filea
+# Local config file
 config/local_default.*
