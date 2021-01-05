@@ -27,6 +27,9 @@
         - { "coordinates": "point", "type": "Point" }
         - { "coordinates": "polygon", "type": "Polygon" }
         - { "coordinates": "multipolygon", "type": "MultiPolygon" }
+    # if you have installed the WKT module you can also accept WKT input (where the acceptable types are resulting geoJSON types)
+    # - { "wkt": "location", "types": [ "Point" ] }
+    # - { "wkt": "borders", "types": [ "Polygon", "MultiPolygon" ] }
   
     # List of request Accept headers that indicates a GeoJSON FeatureCollection should be returned
     # NOTE if this setting is absent or empty, all output is GeoJSON processed
