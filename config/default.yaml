@@ -27,7 +27,7 @@
         - { "coordinates": "point", "type": "Point" }
         - { "coordinates": "polygon", "type": "Polygon" }
         - { "coordinates": "multipolygon", "type": "MultiPolygon" }
-    # if you have installed the WKT module you can also accept WKT input (where the acceptable types are resulting geoJSON types)
+    # if you have installed the WKT module you can also accept WKT input (where the acceptable types are resulting geoJSON types not WKT all caps)
     # - { "wkt": "location", "types": [ "Point" ] }
     # - { "wkt": "borders", "types": [ "Polygon", "MultiPolygon" ] }
   
