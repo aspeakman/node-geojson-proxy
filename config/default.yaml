@@ -1,7 +1,7 @@
 
     "port": 9001 # the port the proxy server will expose
     
-    "target": "http://localhost:9000" # the local target for JSON data that the proxy server will interface to 
+    "target": "http://localhost:9000" # the target for JSON data that the proxy server will interface to 
     
     "changeOrigin": false # true/false, changes the origin of the host header to the target URL
     
