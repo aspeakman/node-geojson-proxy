@@ -14,16 +14,16 @@ At a minimum you will need to define your own 'port' and 'target'
 
 ## Geometric fields
 
-The GeoJSON processing is based on creating Features from named fields with expected geometric contents. The expected contents are define in 'geoFields'. The default configuration includes the following:
+The GeoJSON processing is based on creating Features from named fields with expected geometric contents. The expected contents are defined in 'geoFields'. The default configuration includes the following:
 
 Derive a Feature containing a GeoJSON Point created from two fields named 'lng' and 'lat'
 > { "point_pair": [ "lng", "lat" ] }
 
-Derive a Feature from a field already containing valid GeoJSON eg a PostGIS geometry field (in this case a Point taken from a field named 'location')
+Derive a Feature from a field already containing valid GeoJSON eg a PostGIS geometry field (in this case a field named 'location' is used if it contains a GeoJSON Point)
 > { "geojson": "location", "types": [ "Point" ] }
 
-Derive a Feature from a field containing coordinate array(s) of lng, lat data (in this case a Polygon is created using coordinates in a field named 'bounds')
-> { "coordinates": "bounds", "type": "Polygon" }
+Derive a Feature from a field containing coordinate array(s) of lng, lat data (in this case a Polygon is created using coordinates in a field named 'polygon')
+> { "coordinates": "polygon", "type": "Polygon" }
 
 ## 'Accept' headers
 
@@ -33,7 +33,7 @@ The expected Accept headers are defined in 'geoCollectionAccept', by default as 
 
 > geoCollectionAccept = [ 'application/geo+json',  'vnd/geo+json' ]
 
-Alternatively if you set 'geoCollectionAccept' to null in `config/local_default`, the 'Accept' header will be ignored and all JSON output will be transformed to GeoJSON.
+Alternatively if you set 'geoCollectionAccept' to null in `config/local_default`, the 'Accept' header will be ignored and ALL JSON output will be transformed to GeoJSON.
 
 # Operation
 
