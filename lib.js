@@ -1,4 +1,13 @@
 // Function library
+
+// optionally use WKT module
+try {                                                                                                                                                                                                                     
+    var wkt = require("wkt");
+} catch (e) {  
+    var wkt = null;
+}
+
+// Config settings
 process.env.NODE_ENV = "local_default"; // uses any settings in "local_default" to override "default"
 const config = require('config');
 var corsAllow = null;
@@ -42,17 +51,24 @@ function corsHeaders (req, res) {
 
 function _extractRowGeometry (row, geoFields) {
     for (const gf of geoFields) {
-        if (gf.geojson != null && gf.types != null && row[gf.geojson] != null && gf.types.indexOf(row[gf.geojson].type) > -1) {
-            var geometry = row[gf.geojson];
-            delete row[gf.geojson]; // redundant, so removed from properties
-            return geometry;
+        if (gf.geojson != null && gf.types != null && row[gf.geojson] != null) {
+            if (gf.types.indexOf(row[gf.geojson].type) > -1) { // do the contents match an acceptable type?
+                var geometry = row[gf.geojson];
+                delete row[gf.geojson]; // redundant, so removed from properties
+                return geometry;
+            }
         } else if (gf.point_pair != null && row[gf.point_pair[0]] != null && row[gf.point_pair[1]] != null) {
             return { type: 'Point', coordinates:
                        [ row[gf.point_pair[0]], row[gf.point_pair[1]] ] }; // new GeoJson Point entry
             break;
         } else if (gf.coordinates != null && gf.type != null && row[gf.coordinates] != null) {
             return { type: gf.type, coordinates: row[gf.coordinates] }; // new GeoJson entry
-        }
+        } else if (wkt && gf.wkt != null && gf.types != null && row[gf.wkt] != null) {
+            var geoj = wkt.parse(row[gf.wkt]);
+            if (geoj && gf.types.indexOf(geoj.type) > -1) { // do the contents match an acceptable type?
+                return geoj;
+            }
+        } 
     }
     return null;
 }
