@@ -63,7 +63,7 @@ function _extractRowGeometry (row, geoFields) {
             break;
         } else if (gf.coordinates != null && gf.type != null && row[gf.coordinates] != null) {
             return { type: gf.type, coordinates: row[gf.coordinates] }; // new GeoJson entry
-        } else if (wkt && gf.wkt != null && gf.types != null && row[gf.wkt] != null) {
+        } else if (wkt != null && gf.wkt != null && gf.types != null && row[gf.wkt] != null) {
             var geoj = wkt.parse(row[gf.wkt]);
             if (geoj && gf.types.indexOf(geoj.type) > -1) { // do the contents match an acceptable type?
                 return geoj;
