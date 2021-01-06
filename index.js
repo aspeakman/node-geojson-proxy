@@ -81,10 +81,10 @@ var server = http.createServer(function (req, res) {
 
     if (req.method === 'OPTIONS') {
         lib.corsHeaders(req, res);
-        res.writeHead(200, { 'Allow': 'GET, POST, OPTIONS' } );
+        res.writeHead(200, { 'Allow': 'GET, POST, OPTIONS, HEAD' } );
         res.end();
         return;
-    } else if (req.method === 'GET' || req.method === 'POST') {
+    } else if (req.method === 'GET' || req.method === 'POST' || req.method === 'HEAD') {
     	if (nogeoproxy) {
             var ac_header = req.headers['accept'] || '';
             if (ac_header && geoCollectionAccept.indexOf(ac_header) >= 0) { 
