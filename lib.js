@@ -29,7 +29,7 @@ function corsHeaders (req, res) {
     if (!corsAllow) return;
     res.setHeader('access-control-allow-credentials', 'false');
     if (req.headers['access-control-request-method']) {
-        res.setHeader('access-control-allow-methods', 'GET, POST, OPTIONS'); // only allow read access
+        res.setHeader('access-control-allow-methods', 'GET, POST, OPTIONS, HEAD'); // only allow read access
     }
     if (req.headers['access-control-request-headers']) {
         res.setHeader('access-control-allow-headers', req.headers['access-control-request-headers']); // agree to any request header
