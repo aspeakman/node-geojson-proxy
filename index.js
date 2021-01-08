@@ -77,7 +77,7 @@ if (geoCollectionAccept) {
 }
 
 // a proxy to return the count value as plain text
-countproxy = httpProxy.createProxyServer(options);
+var countproxy = httpProxy.createProxyServer(options);
 countproxy.on("error", function (err, req, res) {
 	sendError(res, err);
 	}); 
