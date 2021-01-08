@@ -76,6 +76,19 @@ if (geoCollectionAccept) {
     });
 }
 
+// a proxy to return the count value as plain text
+countproxy = httpProxy.createProxyServer(options);
+countproxy.on("error", function (err, req, res) {
+	sendError(res, err);
+	}); 
+countproxy.on('proxyReq', function(proxyReq) {
+    proxyReq.setHeader('Prefer', 'count=estimated');
+    });
+countproxy.on("proxyRes", function(proxyRes, req, res) {
+    res.writeHead(200, { 'Content-Type': 'text/plain' } );
+	res.end(proxyRes['content-range']); 
+	});
+
 // Create real server which proxies the request
 var server = http.createServer(function (req, res) {
 
