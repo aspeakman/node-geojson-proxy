@@ -98,10 +98,10 @@ var server = http.createServer(function (req, res) {
         res.end();
         return;
     } else if (req.method === 'GET' || req.method === 'POST' || req.method === 'HEAD') {
-	var ac_header = req.headers['accept'] || '';
-	if (ac_header == 'text/count') {
-	    countproxy.web(req, res);
-	} elif (nogeoproxy) {
+	    var ac_header = req.headers['accept'] || '';
+	    if (ac_header == 'text/count') {
+	        countproxy.web(req, res);
+	    } else if (nogeoproxy) {
             if (ac_header && geoCollectionAccept.indexOf(ac_header) >= 0) { 
                 req.headers['accept'] = 'application/json';
                 geoproxy.web(req, res);
