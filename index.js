@@ -86,9 +86,14 @@ countproxy.on('proxyReq', function(proxyReq) {
     proxyReq.setHeader('Prefer', 'count=estimated');
     });
 countproxy.on("proxyRes", function(proxyRes, req, res) {
-    res.writeHead(200, { 'Content-Type': 'text/plain' } );
-	res.end(proxyRes['content-range']); 
-	});
+	lib.corsHeaders(req, res);
+	//modifyResponse(res, proxyRes, function (body) {
+    //    return 
+	//	});
+    res.writeHead(200, { 'Content-Type': 'text/plain', 
+                        'Content-Range': proxyRes.headers['content-range']} );
+	res.end(proxyRes.headers['content-range']); 
+    });
 
 // Create real server which proxies the request
 var server = http.createServer(function (req, res) {
