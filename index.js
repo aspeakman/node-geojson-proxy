@@ -82,6 +82,7 @@ countproxy.on("error", function (err, req, res) {
 	sendError(res, err);
 	}); 
 countproxy.on('proxyReq', function(proxyReq) {
+    proxyReq.setHeader('Accept', 'application/json');
     proxyReq.setHeader('Prefer', 'count=estimated');
     });
 countproxy.on("proxyRes", function(proxyRes, req, res) {
