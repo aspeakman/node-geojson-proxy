@@ -87,9 +87,9 @@ countproxy.on("error", function (err, req, res) {
 	sendError(res, err);
 	}); 
 countproxy.on('proxyReq', function(proxyReq) {
-    proxyReq.setHeader('Accept', 'application/json');
-    proxyReq.setHeader('Prefer', 'count=estimated');
-    proxyReq.method = 'HEAD'; // make it a HEAD request only
+    if (!proxyReq.headers['prefer']) {
+        proxyReq.setHeader('Prefer', 'count=estimated');
+    }
     });
 countproxy.on("proxyRes", function(proxyRes, req, res) {
     if (!proxyRes.headers['content-range']) {
@@ -122,7 +122,7 @@ var server = http.createServer(function (req, res) {
         return;
     } else if (req.method === 'GET' || req.method === 'POST' || req.method === 'HEAD') {
 	    var ac_header = req.headers['accept'] || '';
-	    if (ac_header == 'text/count') {
+	    if (ac_header == 'application/vnd.pgrst.count+json') {
 	        countproxy.web(req, res);
 	    } else if (nogeoproxy) {
             if (ac_header && geoCollectionAccept.indexOf(ac_header) >= 0) { 
