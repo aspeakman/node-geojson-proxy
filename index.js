@@ -86,8 +86,8 @@ var parserange = /^(\d+)-(\d+)\/(.*)$/;
 countproxy.on("error", function (err, req, res) {
 	sendError(res, err);
 	}); 
-countproxy.on('proxyReq', function(proxyReq) {
-    if (!proxyReq.headers['prefer']) {
+countproxy.on('proxyReq', function(proxyReq, req, res) {
+    if (!req.headers['prefer']) {
         proxyReq.setHeader('Prefer', 'count=estimated');
     }
     });
