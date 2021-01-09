@@ -27,7 +27,11 @@ if (config.has('geoCollectionAccept') && config.get('geoCollectionAccept')) {
 
 var sendError = function(res, err) {
     res.writeHead(500, { 'Content-Type': 'text/plain' } );
-    res.end('An error occured in the GeoJSON proxy');
+    if (err.name) {
+        res.end('An error occured in the GeoJSON proxy: ' + err.name + ': ' + err.message);
+    } else {
+        res.end('An error occured in the GeoJSON proxy: ' + err);
+    }
 };
 
 var modifyGeo = function(res, proxyRes) { // modify GEOJSON and OpenAPI JSON
@@ -76,23 +80,36 @@ if (geoCollectionAccept) {
     });
 }
 
-// a proxy to return the count value as plain text
+// a proxy to return the count value as a JSON response
 var countproxy = httpProxy.createProxyServer(options);
+var parserange = /^(\d+)-(\d+)\/(.*)$/
 countproxy.on("error", function (err, req, res) {
 	sendError(res, err);
 	}); 
 countproxy.on('proxyReq', function(proxyReq) {
     proxyReq.setHeader('Accept', 'application/json');
     proxyReq.setHeader('Prefer', 'count=estimated');
+    proxyReq.method = 'HEAD'; // make it a HEAD request only
     });
 countproxy.on("proxyRes", function(proxyRes, req, res) {
-	lib.corsHeaders(req, res);
-	//modifyResponse(res, proxyRes, function (body) {
-    //    return 
-	//	});
-    res.writeHead(200, { 'Content-Type': 'text/plain', 
+    if (!proxyRes.headers['content-range']) {
+        sendError(res, 'No content range');
+    }
+	var ranged = proxyRes.headers['content-range'].match(parserange);
+    if (ranged != null) {
+        lib.corsHeaders(req, res);
+	    res.writeHead(200, { 'Content-Type': 'application/json', 
                         'Content-Range': proxyRes.headers['content-range']} );
-	res.end(proxyRes.headers['content-range']); 
+        var output = '{"from":' + ranged[0] + ',"to":' ranged[1];
+        if (ranged[2] == '*' || ranged[2] == '') {
+            output += ',"total":null}'; 
+        } else {
+            output += ',"total":' + ranged[2] + '}'; 
+        } 
+        res.end(output); 
+    } else {
+        sendError(res, 'Bad content range: ' + proxyRes.headers['content-range']);
+    }
     });
 
 // Create real server which proxies the request
