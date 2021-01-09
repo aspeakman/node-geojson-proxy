@@ -100,7 +100,7 @@ countproxy.on("proxyRes", function(proxyRes, req, res) {
         lib.corsHeaders(req, res);
 	    res.writeHead(200, { 'Content-Type': 'application/json', 
                         'Content-Range': proxyRes.headers['content-range']} );
-        var output = '{"from":' + ranged[0] + ',"to":' ranged[1];
+        var output = '{"from":' + ranged[0] + ',"to":' + ranged[1];
         if (ranged[2] == '*' || ranged[2] == '') {
             output += ',"total":null}'; 
         } else {
