@@ -82,7 +82,7 @@ if (geoCollectionAccept) {
 
 // a proxy to return the count value as a JSON response
 var countproxy = httpProxy.createProxyServer(options);
-var parserange = /^(\d+)-(\d+)\/(.*)$/
+var parserange = /^(\d+)-(\d+)\/(.*)$/;
 countproxy.on("error", function (err, req, res) {
 	sendError(res, err);
 	}); 
