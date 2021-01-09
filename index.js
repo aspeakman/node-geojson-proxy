@@ -59,7 +59,7 @@ var modifyNoGeo = function(res, proxyRes) { // just modify the OpenAPI JSON
 };
 
 var parserange = /^(\d+)-(\d+)\/(.*)$/;
-var modifyCount = function(res, proxyRes) { // modify JSON count and OpenAPI JSON
+var modifyCount = function(res, proxyRes) { // replace body with simple JSON record total (also does OpenAPI JSON)
 	modifyResponse(res, proxyRes, function (body) {
 		var ct_header = proxyRes.headers['content-type'] || '';
 		if (ct_header.indexOf('application/json') == 0) { 
@@ -105,9 +105,10 @@ if (geoCollectionAccept) {
     });
 }
 
-// a proxy to return the count value as a JSON response
+// **UNDOCUMENTED** a proxy to return the record count values as a simple JSON response see modifyCount above
+// currently triggered by request header 'Accept' 'application/vnd.pgrst.count+json' see below
+// could be made configurable
 var countproxy = httpProxy.createProxyServer(options);
-var parserange = /^(\d+)-(\d+)\/(.*)$/;
 countproxy.on("error", function (err, req, res) {
 	sendError(res, err);
 }); 
@@ -133,15 +134,15 @@ var server = http.createServer(function (req, res) {
 			}
 	        countproxy.web(req, res);
 	    } else if (nogeoproxy) {
-            if (ac_header && geoCollectionAccept.indexOf(ac_header) >= 0) { 
+		    if (ac_header && geoCollectionAccept.indexOf(ac_header) >= 0) { 
                 req.headers['accept'] = 'application/json';
                 geoproxy.web(req, res);
-            } else if (ac_header && geoFeatureAccept && geoFeatureAccept.indexOf(ac_header) >= 0) {
+		    } else if (ac_header && geoFeatureAccept && geoFeatureAccept.indexOf(ac_header) >= 0) {
                 req.headers['accept'] = 'application/vnd.pgrst.object+json';
                 geoproxy.web(req, res);
-            } else {
-                nogeoproxy.web(req, res); // do not massage into GeoJSON if the Accept headers dont match
-            }
+		    } else {
+			    nogeoproxy.web(req, res); // do not massage into GeoJSON if the Accept headers dont match
+		    }
         } else {
             geoproxy.web(req, res); // default is to always massage into GeoJSON
         }
