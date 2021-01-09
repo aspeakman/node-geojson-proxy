@@ -58,6 +58,31 @@ var modifyNoGeo = function(res, proxyRes) { // just modify the OpenAPI JSON
        });
 };
 
+var parserange = /^(\d+)-(\d+)\/(.*)$/;
+var modifyCount = function(res, proxyRes) { // modify JSON count and OpenAPI JSON
+	modifyResponse(res, proxyRes, function (body) {
+		var ct_header = proxyRes.headers['content-type'] || '';
+		if (ct_header.indexOf('application/json') == 0) { 
+			var cr_header = proxyRes.headers['content-range'] || '';
+			var ranged = cr_header.match(parserange);
+			var newbody = {	'from': 0, 'to': 0,	'total': 0 };
+			if (ranged != null) {
+				newbody['from'] = parseInt(ranged[1]);
+				newbody['to'] = parseInt(ranged[2]);
+				newbody['total'] = parseInt(ranged[3]);
+				if (isNaN(newbody['total'])) {
+					newbody['total'] = null;
+				}
+			}
+			return newbody; // returns the header count values only
+		} else if (ct_header.indexOf('application/openapi+json') == 0) {
+		    return lib.openAPIJSON(body); // remove inapplicable verbs from OpenAPI JSON
+		} else { 
+		    return body; // otherwise return as is
+		}
+       });
+};
+
 // Create a geo proxy server using the options
 var geoproxy = httpProxy.createProxyServer(options);
 geoproxy.on("error", function (err, req, res) { // error handling
@@ -85,32 +110,11 @@ var countproxy = httpProxy.createProxyServer(options);
 var parserange = /^(\d+)-(\d+)\/(.*)$/;
 countproxy.on("error", function (err, req, res) {
 	sendError(res, err);
-	}); 
-countproxy.on('proxyReq', function(proxyReq, req, res) {
-    if (!req.headers['prefer']) {
-        proxyReq.setHeader('Prefer', 'count=estimated');
-    }
-    });
-countproxy.on("proxyRes", function(proxyRes, req, res) {
-    if (!proxyRes.headers['content-range']) {
-        sendError(res, 'No content range');
-    }
-	var ranged = proxyRes.headers['content-range'].match(parserange);
-    if (ranged != null) {
-        lib.corsHeaders(req, res);
-	    res.writeHead(200, { 'Content-Type': 'application/json', 
-                        'Content-Range': proxyRes.headers['content-range']} );
-        var output = '{"from":' + ranged[0] + ',"to":' + ranged[1];
-        if (ranged[2] == '*' || ranged[2] == '') {
-            output += ',"total":null}'; 
-        } else {
-            output += ',"total":' + ranged[2] + '}'; 
-        } 
-        res.end(output); 
-    } else {
-        sendError(res, 'Bad content range: ' + proxyRes.headers['content-range']);
-    }
-    });
+}); 
+countproxy.on("proxyRes", function(proxyRes, req, res) { // CORS and modify response
+    lib.corsHeaders(req, res);
+    modifyCount(res, proxyRes);
+});
 
 // Create real server which proxies the request
 var server = http.createServer(function (req, res) {
@@ -123,6 +127,10 @@ var server = http.createServer(function (req, res) {
     } else if (req.method === 'GET' || req.method === 'POST' || req.method === 'HEAD') {
 	    var ac_header = req.headers['accept'] || '';
 	    if (ac_header == 'application/vnd.pgrst.count+json') {
+			req.headers['accept'] = 'application/json';
+			if (!req.headers['prefer']) {
+				req.headers['prefer'] = 'count=estimated';
+			}
 	        countproxy.web(req, res);
 	    } else if (nogeoproxy) {
             if (ac_header && geoCollectionAccept.indexOf(ac_header) >= 0) { 
