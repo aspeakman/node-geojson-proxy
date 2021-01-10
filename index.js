@@ -112,8 +112,14 @@ var countproxy = httpProxy.createProxyServer(options);
 countproxy.on("error", function (err, req, res) {
 	sendError(res, err);
 }); 
+countproxy.on('proxyReq', function(proxyReq, req, res) {
+    if (req.method == 'GET') { // ask for headers only from target
+        proxyReq.method = 'HEAD';
+    }
+});
 countproxy.on("proxyRes", function(proxyRes, req, res) { // CORS and modify response
     lib.corsHeaders(req, res);
+    res.method = req.method; # dont send back as HEAD
     modifyCount(res, proxyRes);
 });
 
